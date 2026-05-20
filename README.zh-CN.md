@@ -37,9 +37,10 @@
 - 第一次使用自动初始化规则
 - 支持 `files`、`grep`、`files_regex` 三种规则
 - 自动检测 common、React、Vue、NestJS 模板
+- 支持用户模板目录，便于沉淀个人/团队规则
 - 在 Snacks Picker 右侧预览规则详情
 - 搜索规则和管理动作分组展示
-- 支持编辑、重置、初始化、查看路径和健康检查
+- 稳定的 `:ProjectSearch` 单入口命令，支持 edit/reset/validate/reload/templates/health 等子命令
 
 ## React 项目示例
 
@@ -65,11 +66,6 @@ return {
     },
     cmd = {
       "ProjectSearch",
-      "ProjectSearchEdit",
-      "ProjectSearchInit",
-      "ProjectSearchReset",
-      "ProjectSearchPath",
-      "ProjectSearchHealth",
     },
     keys = {
       {
@@ -131,11 +127,6 @@ return {
     },
     cmd = {
       "ProjectSearch",
-      "ProjectSearchEdit",
-      "ProjectSearchInit",
-      "ProjectSearchReset",
-      "ProjectSearchPath",
-      "ProjectSearchHealth",
     },
     keys = {
       {
@@ -225,15 +216,37 @@ keys = {
 
 ## 命令
 
+推荐使用稳定的单入口命令：
+
 ```vim
 :ProjectSearch
+:ProjectSearch edit
+:ProjectSearch init
+:ProjectSearch init!
+:ProjectSearch reset
+:ProjectSearch path
+:ProjectSearch validate
+:ProjectSearch reload
+:ProjectSearch templates
+:ProjectSearch health
+:ProjectSearch help
+```
+
+插件加载后仍然会注册兼容旧习惯的别名命令：
+
+```vim
 :ProjectSearchEdit
 :ProjectSearchInit
 :ProjectSearchInit!
 :ProjectSearchReset
 :ProjectSearchPath
+:ProjectSearchValidate
+:ProjectSearchReload
+:ProjectSearchTemplates
 :ProjectSearchHealth
 ```
+
+`ProjectSearch validate` 用于校验当前项目 JSON 规则并显示错误/警告。`ProjectSearch reload` 用于清空内存缓存并从磁盘重新读取规则。
 
 ## 配置
 
@@ -242,6 +255,10 @@ require("project_search").setup({
   keymap = "<leader>sP",
   auto_init = true,
   storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+  template_dirs = {
+    vim.fn.stdpath("config") .. "/project-search/templates",
+    vim.fn.stdpath("data") .. "/project-search/templates",
+  },
   root = nil,
   root_markers = {
     ".git",
@@ -268,6 +285,7 @@ require("project_search").setup({
     react = true,
     vue = true,
     nest = true,
+    user = {},
   },
   picker = {
     title = "Project Search",
@@ -389,13 +407,21 @@ ln -sf "$(command -v fdfind)" ~/.local/bin/fd
 主面板优先显示可执行搜索规则，管理动作放到底部：
 
 ```text
-Search  Files: src                         files
-Search  React: className                   grep
-Search  Service: API layer files           files_regex
+── Common ──
+  Files: src                         files
 
-Manage  Edit current project search rules
-Manage  Reset current project rules from template
-Manage  Copy current rules path
+── React ──
+  React: className                   grep
+
+── Service ──
+  Service: API layer files           files_regex
+
+── Manage ──
+  Edit current project search rules
+  Reset current project rules from template
+  Validate current project rules
+  Reload current project rules
+  Copy current rules path
 ```
 
 规则预览是按需生成的，只有预览窗口需要展示某条规则时才会生成内容，所以即使 preset 很多，打开面板也会保持快速。
@@ -448,7 +474,7 @@ Manage  Copy current rules path
 执行：
 
 ```vim
-:ProjectSearchHealth
+:ProjectSearch health
 ```
 
 或者：
