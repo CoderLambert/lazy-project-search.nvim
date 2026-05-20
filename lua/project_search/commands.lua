@@ -1,120 +1,251 @@
 local M = {}
 
-function M.setup()
-  vim.api.nvim_create_user_command("ProjectSearch", function()
-    require("project_search.picker").open()
-  end, {
-    desc = "Open project search presets",
+local subcommands = {
+  "open",
+  "edit",
+  "init",
+  "reset",
+  "path",
+  "validate",
+  "reload",
+  "templates",
+  "health",
+  "help",
+}
+
+local function usage()
+  return table.concat({
+    "Usage: :ProjectSearch [subcommand]",
+    "",
+    "Subcommands:",
+    "  open       Open project search presets",
+    "  edit       Edit current project search rules",
+    "  init       Initialize current project search rules",
+    "  init!      Force initialize current project search rules",
+    "  reset      Reset current project search rules from template",
+    "  path       Show current project search rules path",
+    "  validate   Validate current project search rules",
+    "  reload     Reload current project search rules",
+    "  templates  Show template configuration",
+    "  health     Run health checks",
+  }, "\n")
+end
+
+local function complete_subcommands(arg_lead, cmdline)
+  local args = vim.split(cmdline, "%s+", {
+    trimempty = true,
   })
 
+  if #args > 2 then
+    return {}
+  end
+
+  local result = {}
+  for _, item in ipairs(subcommands) do
+    if item:find(arg_lead, 1, true) == 1 then
+      result[#result + 1] = item
+    end
+  end
+
+  return result
+end
+
+local function do_open()
+  require("project_search.picker").open()
+end
+
+local function do_edit()
+  require("project_search.storage").edit()
+end
+
+local function do_init(force)
+  local rules_cache = require("project_search.rules")
+  local storage = require("project_search.storage")
+  local util = require("project_search.util")
+
+  local path, created = storage.init(force)
+  rules_cache.invalidate()
+
+  util.notify((created and "rules generated: " or "rules already exist: ") .. path)
+end
+
+local function do_reset()
+  local rules_cache = require("project_search.rules")
+  local storage = require("project_search.storage")
+  local util = require("project_search.util")
+
+  local path = storage.reset()
+  rules_cache.invalidate()
+
+  util.notify("rules reset: " .. path)
+end
+
+local function do_path()
+  local storage = require("project_search.storage")
+  local util = require("project_search.util")
+  util.notify(storage.path())
+end
+
+local function do_validate()
+  local rules_cache = require("project_search.rules")
+  local schema = require("project_search.schema")
+  local util = require("project_search.util")
+
+  local _, report = rules_cache.load({
+    force = true,
+    collect_warnings = true,
+  })
+
+  if not report then
+    util.notify("failed to validate rules", vim.log.levels.ERROR)
+    return
+  end
+
+  if report.kind == "missing" then
+    util.notify(schema.format_messages("rules do not exist", report.errors), vim.log.levels.WARN)
+    return
+  end
+
+  if not report.valid then
+    util.notify(schema.format_messages("invalid rules", report.errors), vim.log.levels.ERROR)
+    return
+  end
+
+  if #report.warnings > 0 then
+    util.notify(schema.format_messages("rules are valid with warnings", report.warnings), vim.log.levels.WARN)
+    return
+  end
+
+  util.notify("rules are valid")
+end
+
+local function do_reload()
+  local rules_cache = require("project_search.rules")
+  local schema = require("project_search.schema")
+  local util = require("project_search.util")
+
+  rules_cache.invalidate()
+
+  local rules, report = rules_cache.load({
+    force = true,
+    collect_warnings = false,
+  })
+
+  if rules then
+    util.notify("rules reloaded")
+    return
+  end
+
+  util.notify(schema.format_messages("failed to reload rules", report and report.errors or {}), vim.log.levels.ERROR)
+end
+
+local function do_templates()
+  local templates = require("project_search.templates")
+  local util = require("project_search.util")
+  util.notify(table.concat(templates.describe(), "\n"))
+end
+
+local function do_health()
+  vim.cmd("checkhealth project_search")
+end
+
+local function do_help()
+  require("project_search.util").notify(usage())
+end
+
+local function dispatch(opts)
+  local args = vim.split(opts.args or "", "%s+", {
+    trimempty = true,
+  })
+
+  local command = args[1] or "open"
+  command = command:lower()
+
+  local force = opts.bang == true or command == "init!" or args[2] == "!" or args[2] == "force" or args[2] == "true"
+  if command == "init!" then
+    command = "init"
+  end
+
+  if command == "" or command == "open" then
+    do_open()
+  elseif command == "edit" then
+    do_edit()
+  elseif command == "init" then
+    do_init(force)
+  elseif command == "reset" then
+    do_reset()
+  elseif command == "path" then
+    do_path()
+  elseif command == "validate" then
+    do_validate()
+  elseif command == "reload" then
+    do_reload()
+  elseif command == "templates" then
+    do_templates()
+  elseif command == "health" then
+    do_health()
+  elseif command == "help" then
+    do_help()
+  else
+    local util = require("project_search.util")
+    util.notify("unknown subcommand: " .. command .. "\n" .. usage(), vim.log.levels.WARN)
+  end
+end
+
+function M.setup()
+  vim.api.nvim_create_user_command("ProjectSearch", dispatch, {
+    bang = true,
+    nargs = "*",
+    complete = complete_subcommands,
+    desc = "Open project search or run a subcommand",
+  })
+
+  -- Backward-compatible aliases. These are available after the plugin is loaded.
   vim.api.nvim_create_user_command("ProjectSearchEdit", function()
-    require("project_search.storage").edit()
+    do_edit()
   end, {
     desc = "Edit current project search rules",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchInit", function(opts)
-    local rules_cache = require("project_search.rules")
-    local storage = require("project_search.storage")
-    local util = require("project_search.util")
-
-    local path, created = storage.init(opts.bang)
-    rules_cache.invalidate()
-
-    util.notify((created and "rules generated: " or "rules already exist: ") .. path)
+    do_init(opts.bang)
   end, {
     bang = true,
     desc = "Initialize current project search rules",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchReset", function()
-    local rules_cache = require("project_search.rules")
-    local storage = require("project_search.storage")
-    local util = require("project_search.util")
-
-    local path = storage.reset()
-    rules_cache.invalidate()
-
-    util.notify("rules reset: " .. path)
+    do_reset()
   end, {
     desc = "Reset current project search rules from template",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchPath", function()
-    local storage = require("project_search.storage")
-    local util = require("project_search.util")
-    util.notify(storage.path())
+    do_path()
   end, {
     desc = "Show current project search rules path",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchValidate", function()
-    local rules_cache = require("project_search.rules")
-    local schema = require("project_search.schema")
-    local util = require("project_search.util")
-
-    local _, report = rules_cache.load({
-      force = true,
-      collect_warnings = true,
-    })
-
-    if not report then
-      util.notify("failed to validate rules", vim.log.levels.ERROR)
-      return
-    end
-
-    if report.kind == "missing" then
-      util.notify(schema.format_messages("rules do not exist", report.errors), vim.log.levels.WARN)
-      return
-    end
-
-    if not report.valid then
-      util.notify(schema.format_messages("invalid rules", report.errors), vim.log.levels.ERROR)
-      return
-    end
-
-    if #report.warnings > 0 then
-      util.notify(schema.format_messages("rules are valid with warnings", report.warnings), vim.log.levels.WARN)
-      return
-    end
-
-    util.notify("rules are valid")
+    do_validate()
   end, {
     desc = "Validate current project search rules",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchReload", function()
-    local rules_cache = require("project_search.rules")
-    local schema = require("project_search.schema")
-    local util = require("project_search.util")
-
-    rules_cache.invalidate()
-
-    local rules, report = rules_cache.load({
-      force = true,
-      collect_warnings = false,
-    })
-
-    if rules then
-      util.notify("rules reloaded")
-      return
-    end
-
-    util.notify(schema.format_messages("failed to reload rules", report and report.errors or {}), vim.log.levels.ERROR)
+    do_reload()
   end, {
     desc = "Reload current project search rules",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchTemplates", function()
-    local templates = require("project_search.templates")
-    local util = require("project_search.util")
-    util.notify(table.concat(templates.describe(), "\n"))
+    do_templates()
   end, {
     desc = "Show project search template configuration",
   })
 
   vim.api.nvim_create_user_command("ProjectSearchHealth", function()
-    vim.cmd("checkhealth project_search")
+    do_health()
   end, {
     desc = "Run project_search health checks",
   })
