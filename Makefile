@@ -1,4 +1,4 @@
-.PHONY: validate test check
+.PHONY: validate test test-runner check
 
 validate:
 	nvim --headless -u NONE -l scripts/validate.lua
@@ -6,4 +6,7 @@ validate:
 test:
 	nvim --headless -u NONE -l scripts/test.lua
 
-check: validate test
+test-runner:
+	nvim --headless -u NONE -l scripts/test_runner.lua
+
+check: validate test test-runner

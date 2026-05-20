@@ -20,8 +20,5 @@ jobs:
           neovim: true
           version: v0.10.4
 
-      - name: Validate Lua and builtin templates
-        run: nvim --headless -u NONE -l scripts/validate.lua
-
-      - name: Run headless unit tests
-        run: nvim --headless -u NONE -l scripts/test.lua
+      - name: Run checks
+        run: make check
