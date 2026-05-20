@@ -26,9 +26,12 @@ local function normalize_names(value)
   end
 
   local result = {}
+  local seen = {}
+
   for _, item in ipairs(value) do
-    if type(item) == "string" and item ~= "" then
+    if type(item) == "string" and item ~= "" and not seen[item] then
       result[#result + 1] = item
+      seen[item] = true
     end
   end
 
@@ -105,18 +108,18 @@ end
 
 function M.list_user_templates()
   local result = {}
-  local seen = {}
+  local seen_names = {}
 
   for _, dir in ipairs(M.user_template_dirs()) do
     local pattern = util.join(dir, "*.json")
     for _, path in ipairs(vim.fn.glob(pattern, false, true)) do
       local name = template_name_from_path(path)
-      if not seen[path] then
+      if not seen_names[name] then
         result[#result + 1] = {
           name = name,
           path = path,
         }
-        seen[path] = true
+        seen_names[name] = true
       end
     end
   end
