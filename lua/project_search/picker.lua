@@ -7,13 +7,55 @@ local util = require("project_search.util")
 
 local M = {}
 
+local function infer_group(preset)
+  if preset.group and preset.group ~= "" then
+    return preset.group
+  end
+
+  local name = preset.name or ""
+  local prefix = name:match("^([^:]+):")
+  if prefix and prefix ~= "" then
+    return prefix
+  end
+
+  local id = preset.id or ""
+  local id_prefix = id:match("^([^.]+)%.")
+  if id_prefix and id_prefix ~= "" then
+    return id_prefix:gsub("^%l", string.upper)
+  end
+
+  return "Search"
+end
+
+local function tags_text(tags)
+  tags = util.to_list(tags)
+  if #tags == 0 then
+    return nil
+  end
+
+  return table.concat(tags, ", ")
+end
+
 local function rule_preview(preset)
   local lines = {
     "# " .. (preset.name or "Unnamed preset"),
     "",
     "Type: `" .. tostring(preset.type or "unknown") .. "`",
+    "Group: `" .. infer_group(preset) .. "`",
+    "Enabled: `" .. tostring(preset.enabled ~= false) .. "`",
     "",
   }
+
+  local tag_line = tags_text(preset.tags)
+  if tag_line then
+    table.insert(lines, "Tags: `" .. tag_line .. "`")
+    table.insert(lines, "")
+  end
+
+  if preset.order ~= nil then
+    table.insert(lines, "Order: `" .. tostring(preset.order) .. "`")
+    table.insert(lines, "")
+  end
 
   if preset.description and preset.description ~= "" then
     table.insert(lines, "## Description")
@@ -96,22 +138,46 @@ local function make_action_item(name, description, action)
   return {
     text = "Manage: " .. name,
     name = name,
+    group = "Manage",
+    order = 100000,
     section = "manage",
     action = action,
     preview_description = description,
   }
 end
 
-local function make_preset_item(preset)
+local function make_preset_item(preset, index)
+  local group = infer_group(preset)
+
   return {
-    text = "Search: " .. preset.name,
+    text = group .. ": " .. preset.name,
     name = preset.name,
+    group = group,
+    order = preset.order or index,
     section = "search",
     preset = preset,
     action = function()
       runner.run(preset)
     end,
   }
+end
+
+local function sort_items(items)
+  table.sort(items, function(left, right)
+    if left.section ~= right.section then
+      return left.section == "search"
+    end
+
+    if left.group ~= right.group then
+      return tostring(left.group) < tostring(right.group)
+    end
+
+    if left.order ~= right.order then
+      return (left.order or 0) < (right.order or 0)
+    end
+
+    return tostring(left.name or left.text) < tostring(right.name or right.text)
+  end)
 end
 
 local function preview_item(ctx)
@@ -134,7 +200,7 @@ local function preview_item(ctx)
 end
 
 local function format_item(item)
-  local label = item.section == "manage" and "Manage" or "Search"
+  local label = item.section == "manage" and "Manage" or item.group or "Search"
   local label_hl = item.section == "manage" and "DiagnosticHint" or "DiagnosticInfo"
   local ret = {
     { label, label_hl },
@@ -145,6 +211,12 @@ local function format_item(item)
   if item.preset and item.preset.type then
     ret[#ret + 1] = { "  " }
     ret[#ret + 1] = { item.preset.type, "Comment" }
+  end
+
+  local tag_line = item.preset and tags_text(item.preset.tags) or nil
+  if tag_line then
+    ret[#ret + 1] = { "  " }
+    ret[#ret + 1] = { tag_line, "Comment" }
   end
 
   return ret
@@ -230,8 +302,10 @@ function M.open()
 
   local items = {}
 
-  for _, preset in ipairs(rules.presets or {}) do
-    table.insert(items, make_preset_item(preset))
+  for index, preset in ipairs(rules.presets or {}) do
+    if preset.enabled ~= false then
+      table.insert(items, make_preset_item(preset, index))
+    end
   end
 
   table.insert(items, make_action_item("Edit current project search rules", "Open the JSON rules file for this project.", function()
@@ -254,6 +328,8 @@ function M.open()
   table.insert(items, make_action_item("Copy current rules path", "Copy the current project's rules file path to the clipboard.", function()
     storage.copy_path()
   end))
+
+  sort_items(items)
 
   local opts = config.get()
   local picker = util.get_snacks_picker()
