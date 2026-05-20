@@ -1,0 +1,26 @@
+README.zh-CN.md
+  s_be23977594c79e::t_50f0ff7c17adef 1-389
+README.md
+  s_be23977594c79e::t_50f0ff7c17adef 5-23,29,31,33-40,48-51,135,137,139-143,145,147-150,152-169,201,203-217,224-225,238-239,252-266,269-270,325,344-362,368-370,381-389
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "e9380c0205ca10c352479157b7c778f0d30a1d6a",
+  "prompts": {},
+  "humans": {
+    "h_0c102f4798bf38": {
+      "author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  },
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
