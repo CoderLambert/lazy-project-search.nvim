@@ -2,31 +2,52 @@
 
 Project-level search presets for LazyVim, powered by Snacks Picker.
 
-The plugin stores one JSON rules file per project outside the source tree:
+[中文文档](README.zh-CN.md)
+
+## Why
+
+Every real project develops its own search habits.
+
+In a React codebase, you may repeatedly look for:
+
+- route files and route definitions
+- TanStack Query hooks and `queryKey`
+- service layer files, excluding tests
+- feature module entry files
+- cross-feature imports
+- UI component imports
+- TODO/FIXME and environment variable usage
+
+Running ad-hoc grep commands for these patterns works, but the knowledge stays in your head. This plugin turns those project-specific searches into editable JSON presets, then exposes them through one fast picker.
+
+Rules are stored outside your repository:
 
 ```text
 ~/.local/share/nvim/project-search/rules/<project-hash>.json
 ```
 
-This keeps search rules editable and project-specific without adding files to your repository.
+That keeps source trees clean while still letting every project have its own search rules.
 
-## Features
+## What It Gives You
 
-- One fast entry point: `<C-p>`
-- Auto-initializes rules on first use
-- Stores rules outside the project
-- Supports JSON rules
-- Supports `files`, `grep`, and `files_regex` presets
-- Detects common, React, Vue, and NestJS templates
-- Provides rule previews in Snacks Picker
-- Groups search presets separately from management actions
-- Provides edit, reset, copy path, init, path, and health commands
+- Fast normal-mode entry point, recommended as `<C-p>`
+- Per-project JSON rule files
+- Auto-initialization on first use
+- Search rules for `files`, `grep`, and `files_regex`
+- Template detection for common, React, Vue, and NestJS projects
+- Rule previews in Snacks Picker
+- Search presets grouped separately from management actions
+- Commands to edit, reset, initialize, inspect, and health-check rules
 
 ## React Project Example
 
 The picker below is from a React project with route, TanStack Query, service layer, feature module, and UI import presets. Search rules stay at the top, while rule-management actions are grouped at the bottom.
 
 ![React project search example](docs/assets/react-project-search.png)
+
+This example shows a service-directory rule that finds API-layer files while excluding test files:
+
+![React service directory search example](docs/assets/react-service-dir-search.png)
 
 ## Installation With LazyVim
 
@@ -111,23 +132,41 @@ Useful alternatives:
 | `<leader>sP` | Best conflict-free fallback inside LazyVim's search namespace. |
 | `<leader>fP` | Good if you prefer grouping project search under file/find commands. |
 
-Avoid `<leader>p` in LazyVim setups because it is commonly used for Yank History, and avoid `<leader><space>` / `<leader>fp` because LazyVim uses them for Find Files and Projects.
+Avoid `<leader>p` in LazyVim setups because it is commonly used for Yank History. Avoid `<leader><space>` and `<leader>fp` because LazyVim uses them for Find Files and Projects.
 
-## Requirements
+## How To Use It In Your Project
 
-- Neovim 0.10+
-- `folke/snacks.nvim`
-- `ripgrep` for grep presets
-- `fd` or `fdfind` for `files_regex` presets
+1. Open a project in Neovim.
+2. Press `<C-p>` or run `:ProjectSearch`.
+3. On first use, the plugin creates a JSON rules file for the current project and opens it.
+4. Edit the generated presets to match your project conventions.
+5. Press `<C-p>` again and run searches from the picker.
 
-Ubuntu/Linux Mint:
+The useful workflow is:
 
-```bash
-sudo apt update
-sudo apt install -y ripgrep fd-find
+- Start from generated common/React/Vue/Nest presets.
+- Add rules for project-specific directories such as `features`, `routes`, `service`, `modules`, or `packages`.
+- Turn repeated manual searches into named rules.
+- Keep rules specific enough to be useful, but broad enough to survive refactors.
 
-mkdir -p ~/.local/bin
-ln -sf "$(command -v fdfind)" ~/.local/bin/fd
+Good candidates for custom rules:
+
+| Need | Rule type |
+| --- | --- |
+| Open a common directory quickly | `files` |
+| Search code text such as `queryKey`, `className`, `TODO` | `grep` |
+| Find files by path conventions such as `hooks/use-*` | `files_regex` |
+
+## Commands
+
+```vim
+:ProjectSearch
+:ProjectSearchEdit
+:ProjectSearchInit
+:ProjectSearchInit!
+:ProjectSearchReset
+:ProjectSearchPath
+:ProjectSearchHealth
 ```
 
 ## Configuration
@@ -159,21 +198,30 @@ require("project_search").setup({
 })
 ```
 
-## Commands
+If you use lazy.nvim `keys`, keep `keymap = false` in `opts` to avoid registering the key twice.
 
-```vim
-:ProjectSearch
-:ProjectSearchEdit
-:ProjectSearchInit
-:ProjectSearchInit!
-:ProjectSearchReset
-:ProjectSearchPath
-:ProjectSearchHealth
+## Requirements
+
+- Neovim 0.10+
+- `folke/snacks.nvim`
+- `ripgrep` for grep presets
+- `fd` or `fdfind` for `files_regex` presets
+
+Ubuntu/Linux Mint:
+
+```bash
+sudo apt update
+sudo apt install -y ripgrep fd-find
+
+mkdir -p ~/.local/bin
+ln -sf "$(command -v fdfind)" ~/.local/bin/fd
 ```
 
 ## Rule Types
 
 ### files
+
+Use `files` when you want a file picker rooted at a specific project directory.
 
 ```json
 {
@@ -187,6 +235,8 @@ require("project_search").setup({
 
 ### grep
 
+Use `grep` when you want to search inside files.
+
 ```json
 {
   "id": "react.query_key",
@@ -199,7 +249,24 @@ require("project_search").setup({
 }
 ```
 
+Regex grep:
+
+```json
+{
+  "id": "react.query_hooks",
+  "name": "TanStack Query: hooks",
+  "description": "Search query-related React hooks.",
+  "type": "grep",
+  "regex": true,
+  "search": "useQuery|useMutation|useInfiniteQuery",
+  "dirs": ["src"],
+  "glob": ["*.ts", "*.tsx"]
+}
+```
+
 ### files_regex
+
+Use `files_regex` when you want to find files by path convention.
 
 `files_regex` is backed by `fd`/`fdfind`, so its regex syntax follows Rust regex rules. Look-around is not supported. Avoid `(?=...)`, `(?!...)`, `(?<=...)`, and `(?<!...)`.
 
@@ -255,7 +322,7 @@ Manage  Copy current rules path
 
 Rule previews are generated on demand when the preview pane needs them, so opening the panel stays fast even with many presets.
 
-## Generated Rules Example
+## Example Rules For A React Project
 
 ```json
 {
@@ -274,12 +341,33 @@ Rule previews are generated on demand when the preview pane needs them, so openi
       "type": "files_regex",
       "regex": "(^|/)hooks/use-[a-z0-9-]+\\.(ts|tsx|js|jsx)$",
       "dirs": ["src", "app", "packages"]
+    },
+    {
+      "id": "react.query_hooks",
+      "name": "TanStack Query: hooks",
+      "description": "Search query-related React hooks.",
+      "type": "grep",
+      "regex": true,
+      "search": "useQuery|useMutation|useInfiniteQuery",
+      "dirs": ["src"],
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "id": "project.service_files",
+      "name": "Service: API layer files",
+      "description": "Find TypeScript files under service directories, excluding test files.",
+      "type": "files_regex",
+      "regex": "service/[^/]+\\.(ts|tsx)$",
+      "dirs": ["src"],
+      "exclude": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"]
     }
   ]
 }
 ```
 
-## Health Check
+## Troubleshooting
+
+Run:
 
 ```vim
 :ProjectSearchHealth
@@ -290,3 +378,12 @@ or:
 ```vim
 :checkhealth project_search
 ```
+
+Common issues:
+
+| Symptom | Check |
+| --- | --- |
+| `grep` rules are empty | Make sure `ripgrep` is installed. |
+| `files_regex` rules are empty | Make sure `fd`/`fdfind` is installed and the regex is supported by Rust regex. |
+| First use opens a JSON file | That is expected. Edit and save the generated project rules, then open the picker again. |
+| A keymap does nothing | Check `:verbose nmap <C-p>` and choose a conflict-free key in your lazy.nvim spec. |
