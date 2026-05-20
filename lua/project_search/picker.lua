@@ -1,5 +1,7 @@
 local config = require("project_search.config")
 local runner = require("project_search.runner")
+local rules_cache = require("project_search.rules")
+local schema = require("project_search.schema")
 local storage = require("project_search.storage")
 local util = require("project_search.util")
 
@@ -130,18 +132,68 @@ local function open_with_select(items, title)
   end)
 end
 
+local function validate_current_rules()
+  local _, report = rules_cache.load({
+    force = true,
+    collect_warnings = true,
+  })
+
+  if not report or not report.valid then
+    util.notify(schema.format_messages("invalid rules", report and report.errors or {}), vim.log.levels.ERROR)
+    return
+  end
+
+  if #report.warnings > 0 then
+    util.notify(schema.format_messages("rules are valid with warnings", report.warnings), vim.log.levels.WARN)
+    return
+  end
+
+  util.notify("rules are valid")
+end
+
+local function reload_current_rules()
+  rules_cache.invalidate()
+
+  local rules, report = rules_cache.load({
+    force = true,
+    collect_warnings = false,
+  })
+
+  if rules then
+    util.notify("rules reloaded")
+    return
+  end
+
+  util.notify(schema.format_messages("failed to reload rules", report and report.errors or {}), vim.log.levels.ERROR)
+end
+
 function M.open()
-  local rules = storage.load()
+  local rules, report = rules_cache.load({
+    collect_warnings = false,
+  })
 
   if not rules then
-    if config.get().auto_init == false then
-      util.notify("rules do not exist. Run :ProjectSearchInit first.", vim.log.levels.WARN)
+    if report and report.kind == "missing" then
+      if config.get().auto_init == false then
+        util.notify("rules do not exist. Run :ProjectSearchInit first.", vim.log.levels.WARN)
+        return
+      end
+
+      local path = storage.init(false)
+      rules_cache.invalidate()
+      util.notify("created rules for current project: " .. path)
+      vim.cmd.edit(vim.fn.fnameescape(path))
       return
     end
 
-    local path = storage.init(false)
-    util.notify("created rules for current project: " .. path)
-    vim.cmd.edit(vim.fn.fnameescape(path))
+    if report and report.kind == "invalid" then
+      util.notify(schema.format_messages("invalid rules", report.errors), vim.log.levels.ERROR)
+      storage.edit()
+      return
+    end
+
+    util.notify(schema.format_messages("failed to load rules", report and report.errors or {}), vim.log.levels.ERROR)
+    storage.edit()
     return
   end
 
@@ -151,7 +203,14 @@ function M.open()
     end),
     make_action_item("Reset current project rules from template", "Regenerate this project's rules from detected templates.", function()
       local path = storage.reset()
+      rules_cache.invalidate()
       util.notify("rules reset: " .. path)
+    end),
+    make_action_item("Validate current project rules", "Validate the current project's JSON rules file.", function()
+      validate_current_rules()
+    end),
+    make_action_item("Reload current project rules", "Clear the in-memory cache and reload rules from disk.", function()
+      reload_current_rules()
     end),
     make_action_item("Copy current rules path", "Copy the current project's rules file path to the clipboard.", function()
       storage.copy_path()
