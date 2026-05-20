@@ -1,0 +1,19 @@
+README.md
+  s_be23977594c79e::t_1a1e017cd22a97 25-30,85-114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "669709aeddcc5e44809f1e0aec398bf942e54d98",
+  "prompts": {},
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
