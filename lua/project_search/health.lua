@@ -1,4 +1,5 @@
 local config = require("project_search.config")
+local rules_cache = require("project_search.rules")
 local storage = require("project_search.storage")
 local util = require("project_search.util")
 
@@ -48,12 +49,33 @@ function M.check()
   info("Rules path: " .. storage.path())
   info("Storage dir: " .. opts.storage_dir)
 
-  if util.exists(storage.path()) then
-    ok("Current project rules file exists")
-  else
+  local _, report = rules_cache.load({
+    force = true,
+    collect_warnings = true,
+  })
+
+  if not report or report.kind == "missing" then
     warn("Current project rules file does not exist", {
       "Run :ProjectSearchInit or open :ProjectSearch with auto_init enabled.",
     })
+    return
+  end
+
+  if report.kind == "load_error" then
+    error("Current project rules file failed to load", report.errors)
+    return
+  end
+
+  ok("Current project rules file exists")
+
+  if report.valid then
+    ok("Current project rules are valid")
+  else
+    error("Current project rules are invalid", report.errors)
+  end
+
+  if report.warnings and #report.warnings > 0 then
+    warn("Current project rules have warnings", report.warnings)
   end
 end
 
