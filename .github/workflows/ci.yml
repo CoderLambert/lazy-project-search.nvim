@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   validate:
     name: Validate
@@ -13,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
 
       - name: Setup Neovim
         uses: rhysd/action-setup-vim@v1
@@ -24,6 +29,17 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: stylua
+
+      - name: Format Lua files
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: make format
+
+      - name: Commit formatted Lua files
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: style: format lua files
+          file_pattern: lua/**/*.lua scripts/**/*.lua
 
       - name: Run checks
         run: make check
