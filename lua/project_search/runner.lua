@@ -121,7 +121,7 @@ local function open_grep_picker(preset)
     search = preset.search,
     regex = preset.regex == true,
     live = preset.live == true,
-    dirs = preset.dirs,
+    dirs = preset.dirs and util.expand_dirs(preset.dirs) or nil,
     glob = preset.glob,
     args = preset.args,
     hidden = preset.hidden,
