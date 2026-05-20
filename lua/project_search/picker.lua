@@ -134,6 +134,24 @@ local function action_preview(title, body)
   }, "\n")
 end
 
+local function group_preview(group)
+  return table.concat({
+    "# " .. group,
+    "",
+    "This is a group header. Select a rule below it to run a project search preset.",
+  }, "\n")
+end
+
+local function make_group_header_item(group)
+  return {
+    text = "── " .. group .. " ──",
+    name = group,
+    group = group,
+    section = "header",
+    kind = "group_header",
+  }
+end
+
 local function make_action_item(name, description, action)
   return {
     text = "Manage: " .. name,
@@ -180,12 +198,32 @@ local function sort_items(items)
   end)
 end
 
+local function with_group_headers(items)
+  local result = {}
+  local current_group = nil
+
+  for _, item in ipairs(items) do
+    local group = item.group or item.section or "Search"
+
+    if group ~= current_group then
+      current_group = group
+      result[#result + 1] = make_group_header_item(group)
+    end
+
+    result[#result + 1] = item
+  end
+
+  return result
+end
+
 local function preview_item(ctx)
   ctx.preview:reset()
   ctx.preview:set_title(ctx.item.name or ctx.item.text)
 
   local text
-  if ctx.item.preset then
+  if ctx.item.kind == "group_header" then
+    text = group_preview(ctx.item.group or ctx.item.name or "Group")
+  elseif ctx.item.preset then
     text = rule_preview(ctx.item.preset)
   else
     text = action_preview(ctx.item.text, ctx.item.preview_description or "")
@@ -200,8 +238,14 @@ local function preview_item(ctx)
 end
 
 local function format_item(item)
-  local label = item.section == "manage" and "Manage" or item.group or "Search"
-  local label_hl = item.section == "manage" and "DiagnosticHint" or "DiagnosticInfo"
+  if item.kind == "group_header" then
+    return {
+      { item.text, "Title" },
+    }
+  end
+
+  local label = item.section == "manage" and "Manage" or "  "
+  local label_hl = item.section == "manage" and "DiagnosticHint" or "Comment"
   local ret = {
     { label, label_hl },
     { "  " },
@@ -223,7 +267,14 @@ local function format_item(item)
 end
 
 local function open_with_select(items, title)
-  vim.ui.select(items, {
+  local selectable = {}
+  for _, item in ipairs(items) do
+    if item.kind ~= "group_header" then
+      selectable[#selectable + 1] = item
+    end
+  end
+
+  vim.ui.select(selectable, {
     prompt = title,
     format_item = function(item)
       return item.text or item.name
@@ -330,20 +381,21 @@ function M.open()
   end))
 
   sort_items(items)
+  local display_items = with_group_headers(items)
 
   local opts = config.get()
   local picker = util.get_snacks_picker()
   local title = opts.picker.title or "Project Search"
 
   if not picker then
-    open_with_select(items, title)
+    open_with_select(display_items, title)
     return
   end
 
   local ok = pcall(function()
     picker.pick({
       title = title,
-      items = items,
+      items = display_items,
       format = format_item,
       preview = preview_item,
       layout = opts.picker.layout,
@@ -351,6 +403,10 @@ function M.open()
         sort_empty = false,
       },
       confirm = function(instance, item)
+        if item and item.kind == "group_header" then
+          return
+        end
+
         instance:close()
         if item and item.action then
           vim.schedule(item.action)
@@ -360,7 +416,7 @@ function M.open()
   end)
 
   if not ok then
-    open_with_select(items, title)
+    open_with_select(display_items, title)
   end
 end
 
