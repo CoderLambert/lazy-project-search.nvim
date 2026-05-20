@@ -6,6 +6,13 @@
 
 状态：已经可以用于日常 Neovim/LazyVim 工作流。规则格式和公开 API 在 v1.0 前仍可能调整。
 
+## 文档
+
+- [配置说明](docs/configuration.md)
+- [格式化说明](docs/formatting.md)
+- [校验与测试](docs/validation.md)
+- [更新日志](CHANGELOG.md)
+
 ## 它解决什么问题
 
 真实项目通常都有自己的代码组织习惯。
@@ -249,6 +256,8 @@ keys = {
 `ProjectSearch validate` 用于校验当前项目 JSON 规则并显示错误/警告。`ProjectSearch reload` 用于清空内存缓存并从磁盘重新读取规则。
 
 ## 配置
+
+完整配置项和规则字段说明见 [docs/configuration.md](docs/configuration.md)。
 
 ```lua
 require("project_search").setup({

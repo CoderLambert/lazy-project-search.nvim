@@ -1,25 +1,54 @@
 # Changelog
 
-## Unreleased
+All notable changes to `lazy-project-search.nvim` are documented here.
 
-- Add plain Neovim support with configurable `root` and `root_markers`.
-- Document plain Neovim installation with `snacks.nvim` picker enabled.
-- Make generated rule metadata wording independent of LazyVim.
-- Support `exclude` in `grep` presets — exclude patterns are now converted to ripgrep `--glob '!...'` args, matching `files_regex` behavior.
-- Add interactive live-search preset example to React rule demo.
-- Add CLAUDE.md AI agent reference for rule generation.
-- Add preset configuration guide (`docs/rule/PRESET_GUIDE.md`).
-- Expand built-in templates: add console.log, deprecated, and live search to common; React Query hooks, context providers, Zustand stores, shadcn imports, and service presets to React; watch/watchEffect, Pinia stores, provide/inject, composables, and page components to Vue; DTOs, guards, interceptors, decorators, entity/module files to NestJS.
-- Split preset guide into separate `en/` and `zh/` directories.
+The project is still pre-1.0. Rule schema and public APIs may evolve before `v1.0.0`.
 
-## v0.1.0
+## v0.1.0 - 2026-05-20
 
-- Initial public release.
-- Project-level JSON search presets stored outside source repositories.
-- LazyVim/lazy.nvim installation support.
-- Snacks Picker panel with grouped Search and Manage items.
-- Rule preview generated on demand for faster picker startup.
-- Rule types: `files`, `grep`, and `files_regex`.
-- Built-in common, React, Vue, and NestJS templates.
-- Commands for opening, editing, initializing, resetting, locating, and health-checking project rules.
-- English and Chinese documentation with React project examples.
+Initial usable release for daily Neovim and LazyVim project-search workflows.
+
+### Added
+
+- Added project-level search presets powered by Snacks Picker.
+- Added per-project JSON rule files stored outside source repositories.
+- Added automatic rule initialization from detected templates.
+- Added built-in templates for common, React, Vue, and NestJS projects.
+- Added user template directories for personal and team preset packs.
+- Added stable project identity based on Git origin, package name, or path hash fallback.
+- Added migration from legacy path-hash rules to stable identity rules.
+- Added rule metadata fields: `id`, `description`, `group`, `tags`, `order`, and `enabled`.
+- Added picker group headers and separated management actions from executable search presets.
+- Added one stable `:ProjectSearch` command with subcommands for `edit`, `init`, `reset`, `path`, `validate`, `reload`, `templates`, `health`, and `help`.
+- Added support for `files`, `grep`, and `files_regex` presets.
+- Added `files_regex` command construction through `fd` / `fdfind`.
+- Added validation for project rules and builtin templates.
+- Added health checks for rule files and external dependencies.
+- Added rule cache invalidation by file mtime and size to keep picker startup fast.
+- Added headless unit tests for schema, identity, storage migration, and runner option construction.
+- Added CI validation with `make check`.
+- Added StyLua formatting, `make format`, `make format-check`, and format enforcement in CI.
+
+### Changed
+
+- Reworked the command surface around `:ProjectSearch` as the primary lazy-loading entry point.
+- Metadata-aware sorting now uses `group`, `order`, and `name` to keep picker output predictable.
+- Rule previews are generated lazily so large preset lists do not slow down opening the picker.
+- Built-in templates now use stable metadata and explicit groups.
+- Deprecated `vim.tbl_islist` usage was replaced with `vim.islist`.
+
+### Developer Experience
+
+- Added `scripts/validate.lua` for Lua syntax and builtin template validation.
+- Added `scripts/test.lua` for core unit tests.
+- Added `scripts/test_runner.lua` for runner behavior tests.
+- Added `docs/validation.md` and `docs/formatting.md`.
+- `make check` now runs:
+  - `format-check`
+  - `validate`
+  - `test`
+  - `test-runner`
+
+### Notes
+
+This release focuses on making project-specific search rules practical, fast, editable, and testable. Future releases can focus on import/export, richer rule editing, monorepo improvements, and template packs.

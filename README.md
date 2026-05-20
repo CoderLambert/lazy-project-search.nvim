@@ -6,6 +6,13 @@ Project-level search presets for Neovim and LazyVim, powered by Snacks Picker.
 
 Status: usable for daily Neovim/LazyVim workflows. The rule format and public API may still change before v1.0.
 
+## Documentation
+
+- [Configuration](docs/configuration.md)
+- [Formatting](docs/formatting.md)
+- [Validation and tests](docs/validation.md)
+- [Changelog](CHANGELOG.md)
+
 ## Why
 
 Every real project develops its own search habits.
@@ -250,6 +257,8 @@ Backward-compatible command aliases are still registered after the plugin loads:
 `ProjectSearch validate` validates the current project's JSON rules and reports errors/warnings. `ProjectSearch reload` clears the in-memory rules cache and reloads rules from disk.
 
 ## Configuration
+
+For the complete configuration reference and rule schema, see [docs/configuration.md](docs/configuration.md).
 
 ```lua
 require("project_search").setup({
