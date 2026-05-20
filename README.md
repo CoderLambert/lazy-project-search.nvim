@@ -38,8 +38,9 @@ That keeps source trees clean while still letting every project have its own sea
 - Search rules for `files`, `grep`, and `files_regex`
 - Template detection for common, React, Vue, and NestJS projects
 - Rule previews in Snacks Picker
+- Cached rule validation by file mtime/size so opening the picker stays fast
 - Search presets grouped separately from management actions
-- Commands to edit, reset, initialize, inspect, and health-check rules
+- Commands to edit, reset, validate, reload, initialize, inspect, and health-check rules
 
 ## React Project Example
 
@@ -69,6 +70,8 @@ return {
       "ProjectSearchInit",
       "ProjectSearchReset",
       "ProjectSearchPath",
+      "ProjectSearchValidate",
+      "ProjectSearchReload",
       "ProjectSearchHealth",
     },
     keys = {
@@ -135,6 +138,8 @@ return {
       "ProjectSearchInit",
       "ProjectSearchReset",
       "ProjectSearchPath",
+      "ProjectSearchValidate",
+      "ProjectSearchReload",
       "ProjectSearchHealth",
     },
     keys = {
@@ -232,8 +237,12 @@ Good candidates for custom rules:
 :ProjectSearchInit!
 :ProjectSearchReset
 :ProjectSearchPath
+:ProjectSearchValidate
+:ProjectSearchReload
 :ProjectSearchHealth
 ```
+
+`ProjectSearchValidate` validates the current project's JSON rules and reports errors/warnings. `ProjectSearchReload` clears the in-memory rules cache and reloads rules from disk.
 
 ## Configuration
 
@@ -384,6 +393,8 @@ Do not write that rule with lookbehind, because `fd` will reject it:
 
 If `fd` rejects a regex, Project Search reports the underlying `fd` error instead of silently showing an empty result.
 
+`dirs`, `glob`, `exclude`, and `args` may be written as either a string or a string array. Project Search normalizes string values into arrays before running presets.
+
 ## Picker Layout
 
 The main panel keeps executable search rules first and management actions at the bottom:
@@ -395,6 +406,8 @@ Search  Service: API layer files           files_regex
 
 Manage  Edit current project search rules
 Manage  Reset current project rules from template
+Manage  Validate current project rules
+Manage  Reload current project rules
 Manage  Copy current rules path
 ```
 
@@ -456,6 +469,8 @@ or:
 ```vim
 :checkhealth project_search
 ```
+
+The health check validates the current project rules when a rules file exists.
 
 Common issues:
 
