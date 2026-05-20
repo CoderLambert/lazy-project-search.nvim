@@ -20,5 +20,10 @@ jobs:
           neovim: true
           version: v0.10.4
 
+      - name: Setup StyLua
+        uses: taiki-e/install-action@v2
+        with:
+          tool: stylua
+
       - name: Run checks
         run: make check
