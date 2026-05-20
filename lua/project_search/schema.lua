@@ -11,6 +11,10 @@ local allowed_fields = {
   name = true,
   description = true,
   type = true,
+  group = true,
+  tags = true,
+  enabled = true,
+  order = true,
   cwd = true,
   dirs = true,
   search = true,
@@ -84,6 +88,17 @@ local function as_boolean(value, ctx, path, fallback)
   return value
 end
 
+local function as_number(value, ctx, path, fallback)
+  if value == nil then
+    return fallback
+  end
+  if type(value) ~= "number" then
+    add_error(ctx, path .. " must be a number")
+    return fallback
+  end
+  return value
+end
+
 local function as_string_list(value, ctx, path)
   if value == nil then
     return nil
@@ -129,6 +144,10 @@ local function normalize_preset(preset, index, ctx)
   normalized.name = as_string(preset.name, ctx, field_path(index, "name"), false)
   normalized.description = as_string(preset.description, ctx, field_path(index, "description"), false)
   normalized.type = as_string(preset.type, ctx, field_path(index, "type"), true)
+  normalized.group = as_string(preset.group, ctx, field_path(index, "group"), false)
+  normalized.tags = as_string_list(preset.tags, ctx, field_path(index, "tags"))
+  normalized.enabled = as_boolean(preset.enabled, ctx, field_path(index, "enabled"), true)
+  normalized.order = as_number(preset.order, ctx, field_path(index, "order"), nil)
 
   if is_blank(normalized.id) then
     normalized.id = "preset." .. index
