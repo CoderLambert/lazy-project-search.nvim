@@ -12,7 +12,7 @@ This keeps search rules editable and project-specific without adding files to yo
 
 ## Features
 
-- One entry point: `<leader>sP`
+- One short entry point: `<leader>p`
 - Auto-initializes rules on first use
 - Stores rules outside the project
 - Supports JSON rules
@@ -43,11 +43,9 @@ return {
     },
     keys = {
       {
-        "<leader>sP",
-        function()
-          require("project_search").open()
-        end,
-        desc = "Project Search Presets",
+        "<leader>p",
+        "<cmd>ProjectSearch<cr>",
+        desc = "Project Search",
       },
     },
     opts = {
@@ -58,6 +56,8 @@ return {
   },
 }
 ```
+
+If `<leader>p` conflicts with your own mappings, change it to any key you prefer, for example `<leader>sP`.
 
 Then run:
 
