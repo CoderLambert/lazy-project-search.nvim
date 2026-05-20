@@ -28,6 +28,7 @@ local function usage()
     "  reload     Reload current project search rules",
     "  templates  Show template configuration",
     "  health     Run health checks",
+    "  help       Show this help message",
   }, "\n")
 end
 
