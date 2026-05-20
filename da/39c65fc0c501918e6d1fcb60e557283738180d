@@ -1,0 +1,19 @@
+lua/project_search/runner.lua
+  s_be23977594c79e::t_e4b7a76807b556 124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "da39c65fc0c501918e6d1fcb60e557283738180d",
+  "prompts": {},
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
