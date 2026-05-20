@@ -19,6 +19,7 @@ This keeps search rules editable and project-specific without adding files to yo
 - Supports `files`, `grep`, and `files_regex` presets
 - Detects common, React, Vue, and NestJS templates
 - Provides rule previews in Snacks Picker
+- Groups search presets separately from management actions
 - Provides edit, reset, copy path, init, path, and health commands
 
 ## Installation With LazyVim
@@ -165,6 +166,8 @@ require("project_search").setup({
 
 ### files_regex
 
+`files_regex` is backed by `fd`/`fdfind`, so its regex syntax follows Rust regex rules. Look-around is not supported. Avoid `(?=...)`, `(?!...)`, `(?<=...)`, and `(?<!...)`.
+
 ```json
 {
   "id": "react.hooks.kebab",
@@ -176,6 +179,46 @@ require("project_search").setup({
   "exclude": ["node_modules", "dist", "build", ".next"]
 }
 ```
+
+Use `exclude` for negative file-name filters. For example, to find service layer files but exclude test files:
+
+```json
+{
+  "id": "project.service_files",
+  "name": "Service: API layer files",
+  "description": "Find TypeScript files under service directories, excluding test files.",
+  "type": "files_regex",
+  "regex": "service/[^/]+\\.(ts|tsx)$",
+  "dirs": ["src"],
+  "exclude": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"]
+}
+```
+
+Do not write that rule with lookbehind, because `fd` will reject it:
+
+```json
+{
+  "regex": "service/[^/]+(?<!\\.test|\\.spec)\\.(ts|tsx)$"
+}
+```
+
+If `fd` rejects a regex, Project Search reports the underlying `fd` error instead of silently showing an empty result.
+
+## Picker Layout
+
+The main panel keeps executable search rules first and management actions at the bottom:
+
+```text
+Search  Files: src                         files
+Search  React: className                   grep
+Search  Service: API layer files           files_regex
+
+Manage  Edit current project search rules
+Manage  Reset current project rules from template
+Manage  Copy current rules path
+```
+
+Rule previews are generated on demand when the preview pane needs them, so opening the panel stays fast even with many presets.
 
 ## Generated Rules Example
 
