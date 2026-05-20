@@ -1,4 +1,4 @@
-# Configuration
+# Advanced Configuration
 
 This document describes the main configuration options and rule schema for `lazy-project-search.nvim`.
 

@@ -4,6 +4,16 @@ All notable changes to `lazy-project-search.nvim` are documented here.
 
 The project is still pre-1.0. Rule schema and public APIs may evolve before `v1.0.0`.
 
+## v0.1.2 - 2026-05-21
+
+Documentation simplification release.
+
+### Changed
+
+- Simplified README to focus on quick start and essential usage.
+- Renamed `docs/configuration.md` to `docs/advanced.md` for clearer positioning.
+- Removed verbose sections from README, moved advanced details to separate docs.
+
 ## v0.1.1 - 2026-05-20
 
 Documentation follow-up release.
