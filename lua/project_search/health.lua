@@ -1,6 +1,7 @@
 local config = require("project_search.config")
 local rules_cache = require("project_search.rules")
 local storage = require("project_search.storage")
+local templates = require("project_search.templates")
 local util = require("project_search.util")
 
 local M = {}
@@ -48,6 +49,10 @@ function M.check()
   info("Project root: " .. util.root())
   info("Rules path: " .. storage.path())
   info("Storage dir: " .. opts.storage_dir)
+
+  for _, line in ipairs(templates.describe()) do
+    info(line)
+  end
 
   local _, report = rules_cache.load({
     force = true,
