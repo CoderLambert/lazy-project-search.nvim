@@ -12,7 +12,7 @@ This keeps search rules editable and project-specific without adding files to yo
 
 ## Features
 
-- One short entry point: `<leader>j`
+- One fast entry point: `<C-p>`
 - Auto-initializes rules on first use
 - Stores rules outside the project
 - Supports JSON rules
@@ -43,7 +43,7 @@ return {
     },
     keys = {
       {
-        "<leader>j",
+        "<C-p>",
         "<cmd>ProjectSearch<cr>",
         desc = "Project Search",
       },
@@ -57,7 +57,7 @@ return {
 }
 ```
 
-`<leader>j` is intentionally short and avoids LazyVim's common `<leader>p` yank-history mapping. If it conflicts with your own mappings, change it to any key you prefer, for example `<leader>sP`.
+`<C-p>` is intentionally a normal-mode mapping: it is fast to press, mnemonic for Project Search, and avoids LazyVim's common `<leader>p` yank-history mapping. If your terminal or personal config already uses it, change it to any key you prefer, for example `<leader>sP`.
 
 Then run:
 
