@@ -20,5 +20,8 @@ jobs:
           neovim: true
           version: v0.10.4
 
+      - name: Install StyLua
+        run: cargo install stylua --locked
+
       - name: Run checks
         run: make check
