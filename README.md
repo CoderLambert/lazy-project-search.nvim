@@ -33,8 +33,25 @@ return {
     dependencies = {
       "folke/snacks.nvim",
     },
+    cmd = {
+      "ProjectSearch",
+      "ProjectSearchEdit",
+      "ProjectSearchInit",
+      "ProjectSearchReset",
+      "ProjectSearchPath",
+      "ProjectSearchHealth",
+    },
+    keys = {
+      {
+        "<leader>sP",
+        function()
+          require("project_search").open()
+        end,
+        desc = "Project Search Presets",
+      },
+    },
     opts = {
-      keymap = "<leader>sP",
+      keymap = false,
       storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
       auto_init = true,
     },
