@@ -1,0 +1,48 @@
+docs/rule/react-rule.json
+  s_c61e8434c6e6b4::t_92e570f25df133 102-104,107
+  s_c61e8434c6e6b4::t_1e7a8d869cb9e6 106
+  s_c61e8434c6e6b4::t_e746e0c0cc1ca3 100
+  h_0c102f4798bf38 101
+  s_c61e8434c6e6b4::t_b7de123cdc7418 105
+lua/project_search/runner.lua
+  s_c61e8434c6e6b4::t_a33039b13b8782 124-129,138
+docs/rule/PRESET_GUIDE.md
+  s_c61e8434c6e6b4::t_0d89e24e53b6f6 1-271
+CLAUDE.md
+  s_c61e8434c6e6b4::t_adb54360027a5f 1-207
+CHANGELOG.md
+  s_04b88520f68830::t_238a60ab0e0ee0 8-11
+prd/v2.md
+  s_04b88520f68830::t_24e4e9c60054d4 231-233
+  s_04b88520f68830::t_6cc94efc7f9f30 51
+  s_04b88520f68830::t_fed29bf6b5888d 160-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "599598bd651767db43f1995014a874fd326682c0",
+  "prompts": {},
+  "humans": {
+    "h_0c102f4798bf38": {
+      "author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  },
+  "sessions": {
+    "s_04b88520f68830": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9d7c2b07-8385-4544-b235-c060b9945c2d",
+        "model": "glm-5.1"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    },
+    "s_c61e8434c6e6b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a9b5adda-0c9c-40b9-9652-ef4bcd2e411a",
+        "model": "glm-5.1"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
