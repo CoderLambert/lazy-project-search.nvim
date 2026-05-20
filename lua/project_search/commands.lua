@@ -105,6 +105,14 @@ function M.setup()
     desc = "Reload current project search rules",
   })
 
+  vim.api.nvim_create_user_command("ProjectSearchTemplates", function()
+    local templates = require("project_search.templates")
+    local util = require("project_search.util")
+    util.notify(table.concat(templates.describe(), "\n"))
+  end, {
+    desc = "Show project search template configuration",
+  })
+
   vim.api.nvim_create_user_command("ProjectSearchHealth", function()
     vim.cmd("checkhealth project_search")
   end, {
