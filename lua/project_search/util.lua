@@ -71,26 +71,71 @@ end
 
 function M.pretty_json(data)
   local compact = vim.json.encode(data)
+  local lines = {}
+  local level = 0
+  local in_string = false
+  local escaped = false
 
-  if vim.fn.executable("python3") == 1 then
-    local result = vim.system({ "python3", "-m", "json.tool" }, {
-      text = true,
-      stdin = compact,
-    }):wait()
-
-    if result.code == 0 and result.stdout and result.stdout ~= "" then
-      return result.stdout
-    end
+  local function push(value)
+    lines[#lines + 1] = value
   end
 
-  return compact
+  local function newline()
+    push("\n")
+    push(string.rep("  ", level))
+  end
+
+  local i = 1
+  while i <= #compact do
+    local char = compact:sub(i, i)
+
+    if in_string then
+      push(char)
+
+      if escaped then
+        escaped = false
+      elseif char == "\\" then
+        escaped = true
+      elseif char == '"' then
+        in_string = false
+      end
+    elseif char == '"' then
+      in_string = true
+      push(char)
+    elseif char == "{" or char == "[" then
+      local closing = char == "{" and "}" or "]"
+      if compact:sub(i + 1, i + 1) == closing then
+        push(char .. closing)
+        i = i + 1
+      else
+        push(char)
+        level = level + 1
+        newline()
+      end
+    elseif char == "}" or char == "]" then
+      level = math.max(level - 1, 0)
+      newline()
+      push(char)
+    elseif char == "," then
+      push(char)
+      newline()
+    elseif char == ":" then
+      push(": ")
+    else
+      push(char)
+    end
+
+    i = i + 1
+  end
+
+  return table.concat(lines)
 end
 
 function M.write_json(path, data)
   vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
 
   local file = assert(io.open(path, "w"))
-  file:write(M.pretty_json(data))
+  file:write(M.pretty_json(data), "\n")
   file:close()
 end
 

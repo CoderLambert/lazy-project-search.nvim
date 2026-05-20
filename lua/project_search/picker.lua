@@ -94,11 +94,7 @@ local function make_action_item(name, description, action)
   return {
     text = name,
     action = action,
-    preview = {
-      text = action_preview(name, description),
-      ft = "markdown",
-      loc = false,
-    },
+    preview_description = description,
   }
 end
 
@@ -109,12 +105,26 @@ local function make_preset_item(preset)
     action = function()
       runner.run(preset)
     end,
-    preview = {
-      text = rule_preview(preset),
-      ft = "markdown",
-      loc = false,
-    },
   }
+end
+
+local function preview_item(ctx)
+  ctx.preview:reset()
+  ctx.preview:set_title(ctx.item.text)
+
+  local text
+  if ctx.item.preset then
+    text = rule_preview(ctx.item.preset)
+  else
+    text = action_preview(ctx.item.text, ctx.item.preview_description or "")
+  end
+
+  ctx.preview:set_lines(vim.split(text, "\n", {
+    plain = true,
+  }))
+  ctx.preview:highlight({
+    ft = "markdown",
+  })
 end
 
 local function open_with_select(items, title)
@@ -176,7 +186,7 @@ function M.open()
       title = title,
       items = items,
       format = "text",
-      preview = "preview",
+      preview = preview_item,
       layout = opts.picker.layout,
       confirm = function(instance, item)
         instance:close()
