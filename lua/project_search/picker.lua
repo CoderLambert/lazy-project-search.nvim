@@ -92,7 +92,9 @@ end
 
 local function make_action_item(name, description, action)
   return {
-    text = name,
+    text = "Manage: " .. name,
+    name = name,
+    section = "manage",
     action = action,
     preview_description = description,
   }
@@ -100,7 +102,9 @@ end
 
 local function make_preset_item(preset)
   return {
-    text = preset.name,
+    text = "Search: " .. preset.name,
+    name = preset.name,
+    section = "search",
     preset = preset,
     action = function()
       runner.run(preset)
@@ -110,7 +114,7 @@ end
 
 local function preview_item(ctx)
   ctx.preview:reset()
-  ctx.preview:set_title(ctx.item.text)
+  ctx.preview:set_title(ctx.item.name or ctx.item.text)
 
   local text
   if ctx.item.preset then
@@ -127,11 +131,28 @@ local function preview_item(ctx)
   })
 end
 
+local function format_item(item)
+  local label = item.section == "manage" and "Manage" or "Search"
+  local label_hl = item.section == "manage" and "DiagnosticHint" or "DiagnosticInfo"
+  local ret = {
+    { label, label_hl },
+    { "  " },
+    { item.name or item.text },
+  }
+
+  if item.preset and item.preset.type then
+    ret[#ret + 1] = { "  " }
+    ret[#ret + 1] = { item.preset.type, "Comment" }
+  end
+
+  return ret
+end
+
 local function open_with_select(items, title)
   vim.ui.select(items, {
     prompt = title,
     format_item = function(item)
-      return item.text
+      return item.text or item.name
     end,
   }, function(choice)
     if choice and choice.action then
@@ -155,22 +176,25 @@ function M.open()
     return
   end
 
-  local items = {
-    make_action_item("Edit current project search rules", "Open the JSON rules file for this project.", function()
-      storage.edit()
-    end),
-    make_action_item("Reset current project rules from template", "Regenerate this project's rules from detected templates.", function()
-      local path = storage.reset()
-      util.notify("rules reset: " .. path)
-    end),
-    make_action_item("Copy current rules path", "Copy the current project's rules file path to the clipboard.", function()
-      storage.copy_path()
-    end),
-  }
+  local items = {}
 
   for _, preset in ipairs(rules.presets or {}) do
     table.insert(items, make_preset_item(preset))
   end
+
+  table.insert(items, make_action_item("Edit current project search rules", "Open the JSON rules file for this project.", function()
+    storage.edit()
+  end))
+  table.insert(
+    items,
+    make_action_item("Reset current project rules from template", "Regenerate this project's rules from detected templates.", function()
+      local path = storage.reset()
+      util.notify("rules reset: " .. path)
+    end)
+  )
+  table.insert(items, make_action_item("Copy current rules path", "Copy the current project's rules file path to the clipboard.", function()
+    storage.copy_path()
+  end))
 
   local opts = config.get()
   local picker = util.get_snacks_picker()
@@ -185,9 +209,12 @@ function M.open()
     picker.pick({
       title = title,
       items = items,
-      format = "text",
+      format = format_item,
       preview = preview_item,
       layout = opts.picker.layout,
+      matcher = {
+        sort_empty = false,
+      },
       confirm = function(instance, item)
         instance:close()
         if item and item.action then
