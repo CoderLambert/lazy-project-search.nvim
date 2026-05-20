@@ -1,0 +1,58 @@
+[
+  {
+    "id": "common.files.src",
+    "name": "Files: src",
+    "description": "Open a file picker rooted at the project's src directory.",
+    "type": "files",
+    "cwd": "src"
+  },
+  {
+    "id": "common.todo_fixme",
+    "name": "Search: TODO / FIXME",
+    "description": "Search TODO and FIXME markers in source files.",
+    "type": "grep",
+    "search": "TODO|FIXME",
+    "regex": true,
+    "dirs": ["src"]
+  },
+  {
+    "id": "common.env_usage",
+    "name": "Search: env usage",
+    "description": "Search process.env and import.meta.env references.",
+    "type": "grep",
+    "search": "process\\.env|import\\.meta\\.env",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"]
+  },
+  {
+    "id": "common.console_log",
+    "name": "Search: console.log",
+    "description": "Find leftover console.log statements for cleanup.",
+    "type": "grep",
+    "search": "console\\.log",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"],
+    "exclude": ["*.test.*", "*.spec.*"]
+  },
+  {
+    "id": "common.deprecated",
+    "name": "Search: deprecated",
+    "description": "Find @deprecated annotations and deprecated markers.",
+    "type": "grep",
+    "search": "@deprecated|DEPRECATED",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"]
+  },
+  {
+    "id": "common.live_src",
+    "name": "Search: live in src",
+    "description": "Interactive content search across src — type to search in real time.",
+    "type": "grep",
+    "search": "",
+    "live": true,
+    "dirs": ["src"]
+  }
+]

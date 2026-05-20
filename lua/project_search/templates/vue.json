@@ -1,0 +1,75 @@
+[
+  {
+    "id": "vue.define_props",
+    "name": "Vue: defineProps",
+    "description": "Search defineProps usage in Vue projects.",
+    "type": "grep",
+    "search": "defineProps",
+    "dirs": ["src"],
+    "glob": ["*.vue", "*.ts"]
+  },
+  {
+    "id": "vue.define_emits",
+    "name": "Vue: defineEmits",
+    "description": "Search defineEmits usage in Vue projects.",
+    "type": "grep",
+    "search": "defineEmits",
+    "dirs": ["src"],
+    "glob": ["*.vue", "*.ts"]
+  },
+  {
+    "id": "vue.ref_computed",
+    "name": "Vue: ref / computed",
+    "description": "Search ref(...) and computed(...) usage.",
+    "type": "grep",
+    "search": "\\b(ref|computed)\\(",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.vue", "*.ts"]
+  },
+  {
+    "id": "vue.watch",
+    "name": "Vue: watch / watchEffect",
+    "description": "Search watch and watchEffect usage.",
+    "type": "grep",
+    "search": "\\b(watch|watchEffect)\\(",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.vue", "*.ts"]
+  },
+  {
+    "id": "vue.pinia_stores",
+    "name": "Pinia: store definitions",
+    "description": "Search Pinia store definition patterns.",
+    "type": "grep",
+    "search": "defineStore",
+    "dirs": ["src/stores", "src/store", "src"],
+    "glob": ["*.ts", "*.js"]
+  },
+  {
+    "id": "vue.provide_inject",
+    "name": "Vue: provide / inject",
+    "description": "Search provide and inject usage for dependency injection.",
+    "type": "grep",
+    "search": "\\b(provide|inject)\\(",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.vue", "*.ts"]
+  },
+  {
+    "id": "vue.composables",
+    "name": "Composables: use-* files",
+    "description": "Find composable files by path convention.",
+    "type": "files_regex",
+    "regex": "(^|/)composables/use-[a-z0-9-]+\\.(ts|js)$",
+    "dirs": ["src"]
+  },
+  {
+    "id": "vue.page_components",
+    "name": "Vue: page components",
+    "description": "Find Vue page/view components in pages or views directories.",
+    "type": "files_regex",
+    "regex": "(^|/)(pages|views)/[^/]+\\.vue$",
+    "dirs": ["src"]
+  }
+]

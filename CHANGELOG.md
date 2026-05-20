@@ -9,6 +9,8 @@
 - Add interactive live-search preset example to React rule demo.
 - Add CLAUDE.md AI agent reference for rule generation.
 - Add preset configuration guide (`docs/rule/PRESET_GUIDE.md`).
+- Expand built-in templates: add console.log, deprecated, and live search to common; React Query hooks, context providers, Zustand stores, shadcn imports, and service presets to React; watch/watchEffect, Pinia stores, provide/inject, composables, and page components to Vue; DTOs, guards, interceptors, decorators, entity/module files to NestJS.
+- Split preset guide into separate `en/` and `zh/` directories.
 
 ## v0.1.0
 

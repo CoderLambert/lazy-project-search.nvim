@@ -160,7 +160,10 @@ These are the built-in presets the plugin auto-generates. Use them as a baseline
 [
   { "type": "files", "name": "Files: src", "cwd": "src" },
   { "type": "grep", "name": "Search: TODO / FIXME", "search": "TODO|FIXME", "regex": true, "dirs": ["src"] },
-  { "type": "grep", "name": "Search: env usage", "search": "process\\.env|import\\.meta\\.env", "regex": true, "dirs": ["src"], "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"] }
+  { "type": "grep", "name": "Search: env usage", "search": "process\\.env|import\\.meta\\.env", "regex": true, "dirs": ["src"], "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"] },
+  { "type": "grep", "name": "Search: console.log", "search": "console\\.log", "regex": true, "dirs": ["src"], "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"], "exclude": ["*.test.*", "*.spec.*"] },
+  { "type": "grep", "name": "Search: deprecated", "search": "@deprecated|DEPRECATED", "regex": true, "dirs": ["src"], "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"] },
+  { "type": "grep", "name": "Search: live in src", "search": "", "live": true, "dirs": ["src"] }
 ]
 ```
 
@@ -171,7 +174,13 @@ These are the built-in presets the plugin auto-generates. Use them as a baseline
   { "type": "files_regex", "name": "Hooks: use-* kebab files", "regex": "(^|/)hooks/use-[a-z0-9-]+\\.(ts|tsx|js|jsx)$", "dirs": ["src", "app", "packages"], "exclude": ["node_modules", "dist", "build", ".next"] },
   { "type": "grep", "name": "React: className", "search": "className", "dirs": ["src", "app"], "glob": ["*.tsx", "*.jsx"] },
   { "type": "grep", "name": "React: queryKey", "search": "queryKey", "dirs": ["src", "app"], "glob": ["*.ts", "*.tsx"] },
-  { "type": "grep", "name": "React: custom hook definitions", "search": "\\bexport\\s+(function|const)\\s+use[A-Z][A-Za-z0-9_]*", "regex": true, "dirs": ["src", "app"], "glob": ["*.ts", "*.tsx"] }
+  { "type": "grep", "name": "React: custom hook definitions", "search": "\\bexport\\s+(function|const)\\s+use[A-Z][A-Za-z0-9_]*", "regex": true, "dirs": ["src", "app"], "glob": ["*.ts", "*.tsx"] },
+  { "type": "grep", "name": "React Query: hooks", "search": "useQuery|useMutation|useInfiniteQuery", "regex": true, "dirs": ["src", "app"], "glob": ["*.ts", "*.tsx"], "exclude": ["*.test.*", "*.spec.*"] },
+  { "type": "grep", "name": "React: context providers", "search": "createContext|useContext", "regex": true, "dirs": ["src", "app"], "glob": ["*.ts", "*.tsx"] },
+  { "type": "grep", "name": "Zustand: store definitions", "search": "create\\(\\)|create<", "regex": true, "dirs": ["src", "app"], "glob": ["*.ts", "*.tsx"] },
+  { "type": "grep", "name": "UI: shadcn component imports", "search": "from\\s+['\"]@/components/ui/", "regex": true, "dirs": ["src", "app"], "glob": ["*.tsx", "*.jsx"] },
+  { "type": "files_regex", "name": "Service: API layer files", "regex": "service/[^/]+\\.(ts|tsx)$", "dirs": ["src"], "exclude": ["*.test.*", "*.spec.*"] },
+  { "type": "grep", "name": "Search: service content", "search": "", "live": true, "regex": true, "dirs": ["src/service", "src/services", "src/api"], "glob": ["*.ts", "*.tsx"], "exclude": ["*.test.*", "*.spec.*"] }
 ]
 ```
 
@@ -181,7 +190,12 @@ These are the built-in presets the plugin auto-generates. Use them as a baseline
 [
   { "type": "grep", "name": "Vue: defineProps", "search": "defineProps", "dirs": ["src"], "glob": ["*.vue", "*.ts"] },
   { "type": "grep", "name": "Vue: defineEmits", "search": "defineEmits", "dirs": ["src"], "glob": ["*.vue", "*.ts"] },
-  { "type": "grep", "name": "Vue: ref / computed", "search": "\\b(ref|computed)\\(", "regex": true, "dirs": ["src"], "glob": ["*.vue", "*.ts"] }
+  { "type": "grep", "name": "Vue: ref / computed", "search": "\\b(ref|computed)\\(", "regex": true, "dirs": ["src"], "glob": ["*.vue", "*.ts"] },
+  { "type": "grep", "name": "Vue: watch / watchEffect", "search": "\\b(watch|watchEffect)\\(", "regex": true, "dirs": ["src"], "glob": ["*.vue", "*.ts"] },
+  { "type": "grep", "name": "Pinia: store definitions", "search": "defineStore", "dirs": ["src/stores", "src/store", "src"], "glob": ["*.ts", "*.js"] },
+  { "type": "grep", "name": "Vue: provide / inject", "search": "\\b(provide|inject)\\(", "regex": true, "dirs": ["src"], "glob": ["*.vue", "*.ts"] },
+  { "type": "files_regex", "name": "Composables: use-* files", "regex": "(^|/)composables/use-[a-z0-9-]+\\.(ts|js)$", "dirs": ["src"] },
+  { "type": "files_regex", "name": "Vue: page components", "regex": "(^|/)(pages|views)/[^/]+\\.vue$", "dirs": ["src"] }
 ]
 ```
 
@@ -191,7 +205,13 @@ These are the built-in presets the plugin auto-generates. Use them as a baseline
 [
   { "type": "grep", "name": "Nest: Controllers", "search": "@Controller", "dirs": ["src"], "glob": ["*.ts"] },
   { "type": "grep", "name": "Nest: Services", "search": "@Injectable", "dirs": ["src"], "glob": ["*.ts"] },
-  { "type": "grep", "name": "Nest: Modules", "search": "@Module", "dirs": ["src"], "glob": ["*.ts"] }
+  { "type": "grep", "name": "Nest: Modules", "search": "@Module", "dirs": ["src"], "glob": ["*.ts"] },
+  { "type": "grep", "name": "Nest: DTOs", "search": "\\bclass\\s+\\w+Dto\\b", "regex": true, "dirs": ["src"], "glob": ["*.ts"] },
+  { "type": "grep", "name": "Nest: Guards", "search": "@Injectable|@UseGuards|CanActivate", "regex": true, "dirs": ["src"], "glob": ["*.guard.ts", "*.ts"] },
+  { "type": "grep", "name": "Nest: Interceptors", "search": "@Injectable|NestInterceptor|@UseInterceptors", "regex": true, "dirs": ["src"], "glob": ["*.interceptor.ts", "*.ts"] },
+  { "type": "grep", "name": "Nest: custom decorators", "search": "\\bexport\\s+(function|const)\\s+\\w+\\s*=.*createParamDecorator|SetMetadata", "regex": true, "dirs": ["src"], "glob": ["*.decorator.ts", "*.ts"] },
+  { "type": "files_regex", "name": "Nest: entity files", "regex": "(^|/)entities?/[^/]+\\.(ts|js)$|(^|/)\\.prisma$", "dirs": ["src"] },
+  { "type": "files_regex", "name": "Nest: module files", "regex": "\\.module\\.ts$", "dirs": ["src"] }
 ]
 ```
 

@@ -1,0 +1,85 @@
+[
+  {
+    "id": "nest.controllers",
+    "name": "Nest: Controllers",
+    "description": "Search NestJS controller decorators.",
+    "type": "grep",
+    "search": "@Controller",
+    "dirs": ["src"],
+    "glob": ["*.ts"]
+  },
+  {
+    "id": "nest.services",
+    "name": "Nest: Services",
+    "description": "Search NestJS injectable providers.",
+    "type": "grep",
+    "search": "@Injectable",
+    "dirs": ["src"],
+    "glob": ["*.ts"]
+  },
+  {
+    "id": "nest.modules",
+    "name": "Nest: Modules",
+    "description": "Search NestJS module decorators.",
+    "type": "grep",
+    "search": "@Module",
+    "dirs": ["src"],
+    "glob": ["*.ts"]
+  },
+  {
+    "id": "nest.dtos",
+    "name": "Nest: DTOs",
+    "description": "Search DTO class definitions.",
+    "type": "grep",
+    "search": "\\bclass\\s+\\w+Dto\\b",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.ts"]
+  },
+  {
+    "id": "nest.guards",
+    "name": "Nest: Guards",
+    "description": "Search NestJS guard decorators.",
+    "type": "grep",
+    "search": "@Injectable|@UseGuards|CanActivate",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.guard.ts", "*.ts"]
+  },
+  {
+    "id": "nest.interceptors",
+    "name": "Nest: Interceptors",
+    "description": "Search NestJS interceptor patterns.",
+    "type": "grep",
+    "search": "@Injectable|NestInterceptor|@UseInterceptors",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.interceptor.ts", "*.ts"]
+  },
+  {
+    "id": "nest.decorators",
+    "name": "Nest: custom decorators",
+    "description": "Search custom decorator definitions.",
+    "type": "grep",
+    "search": "\\bexport\\s+(function|const)\\s+\\w+\\s*=.*createParamDecorator|SetMetadata",
+    "regex": true,
+    "dirs": ["src"],
+    "glob": ["*.decorator.ts", "*.ts"]
+  },
+  {
+    "id": "nest.entity_files",
+    "name": "Nest: entity files",
+    "description": "Find TypeORM/Prisma entity files by path.",
+    "type": "files_regex",
+    "regex": "(^|/)entities?/[^/]+\\.(ts|js)$|(^|/)\\.prisma$",
+    "dirs": ["src"]
+  },
+  {
+    "id": "nest.module_files",
+    "name": "Nest: module files",
+    "description": "Find all NestJS module files by path.",
+    "type": "files_regex",
+    "regex": "\\.module\\.ts$",
+    "dirs": ["src"]
+  }
+]
