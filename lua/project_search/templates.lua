@@ -48,11 +48,11 @@ local function read_template_file(path)
     return {}
   end
 
-  if vim.tbl_islist(data) then
+  if vim.islist(data) then
     return data
   end
 
-  if type(data) == "table" and vim.tbl_islist(data.presets or {}) then
+  if type(data) == "table" and vim.islist(data.presets or {}) then
     return data.presets
   end
 
