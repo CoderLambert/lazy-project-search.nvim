@@ -2,16 +2,14 @@
 
 Project Search uses StyLua for Lua formatting.
 
-This guide is for maintainers who want to run formatting locally and submit the formatting changes as a normal pull request.
-
-## Install StyLua
+## Install StyLua locally
 
 ### Ubuntu / Linux Mint
 
 Using cargo:
 
 ```bash
-cargo install stylua
+cargo install stylua --locked
 ```
 
 Or using npm / npx without a global install:
@@ -63,6 +61,19 @@ This runs:
 stylua --check lua scripts
 ```
 
+## Run all checks
+
+```bash
+make check
+```
+
+`make check` includes:
+
+- `format-check`
+- `validate`
+- `test`
+- `test-runner`
+
 ## Recommended formatting PR workflow
 
 Create a dedicated branch:
@@ -86,7 +97,7 @@ Review the diff:
 git diff -- lua scripts
 ```
 
-Run existing checks:
+Run all checks:
 
 ```bash
 make check
@@ -105,22 +116,16 @@ Push and open a pull request:
 git push -u origin style/format-lua
 ```
 
-## After the formatting PR is merged
+## CI
 
-After all Lua files are formatted, we can enable formatting enforcement in CI by changing `Makefile` from:
+CI installs StyLua using cargo and runs:
 
-```makefile
-check: validate test test-runner
+```bash
+make check
 ```
 
-to:
-
-```makefile
-check: format-check validate test test-runner
-```
-
-Then CI will fail whenever Lua files are not formatted.
+This means CI fails when Lua files are not formatted.
 
 ## Notes
 
-Keep the formatting PR focused. Avoid mixing formatting with behavior changes, tests, templates, or docs updates.
+Keep formatting PRs focused. Avoid mixing formatting with behavior changes, tests, templates, or docs updates.
