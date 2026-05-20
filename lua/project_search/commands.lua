@@ -6,6 +6,8 @@ local subcommands = {
   "init",
   "reset",
   "path",
+  "identity",
+  "migrate",
   "validate",
   "reload",
   "templates",
@@ -24,6 +26,8 @@ local function usage()
     "  init!      Force initialize current project search rules",
     "  reset      Reset current project search rules from template",
     "  path       Show current project search rules path",
+    "  identity   Show current project identity",
+    "  migrate    Migrate legacy path-hash rules to stable identity path",
     "  validate   Validate current project search rules",
     "  reload     Reload current project search rules",
     "  templates  Show template configuration",
@@ -87,6 +91,40 @@ local function do_path()
   util.notify(storage.path())
 end
 
+local function do_identity()
+  local identity = require("project_search.identity")
+  local storage = require("project_search.storage")
+  local util = require("project_search.util")
+
+  identity.invalidate()
+
+  local status = storage.migration_status()
+  local lines = identity.describe()
+  lines[#lines + 1] = "Rules path: " .. storage.path()
+  lines[#lines + 1] = "Identity path: " .. status.current
+  lines[#lines + 1] = "Legacy path: " .. status.legacy
+  lines[#lines + 1] = "Migration needed: " .. tostring(status.needed)
+
+  util.notify(table.concat(lines, "\n"))
+end
+
+local function do_migrate()
+  local rules_cache = require("project_search.rules")
+  local storage = require("project_search.storage")
+  local util = require("project_search.util")
+
+  local path, migrated, status, err = storage.migrate()
+  rules_cache.invalidate()
+
+  if err then
+    util.notify("rules migration failed: " .. err, vim.log.levels.ERROR)
+  elseif migrated then
+    util.notify("rules migrated: " .. status.legacy .. " -> " .. path)
+  else
+    util.notify("rules migration not needed: " .. path)
+  end
+end
+
 local function do_validate()
   local rules_cache = require("project_search.rules")
   local schema = require("project_search.schema")
@@ -121,10 +159,12 @@ local function do_validate()
 end
 
 local function do_reload()
+  local identity = require("project_search.identity")
   local rules_cache = require("project_search.rules")
   local schema = require("project_search.schema")
   local util = require("project_search.util")
 
+  identity.invalidate()
   rules_cache.invalidate()
 
   local rules, report = rules_cache.load({
@@ -177,6 +217,10 @@ local function dispatch(opts)
     do_reset()
   elseif command == "path" then
     do_path()
+  elseif command == "identity" then
+    do_identity()
+  elseif command == "migrate" then
+    do_migrate()
   elseif command == "validate" then
     do_validate()
   elseif command == "reload" then

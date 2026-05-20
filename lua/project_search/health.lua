@@ -1,4 +1,5 @@
 local config = require("project_search.config")
+local identity = require("project_search.identity")
 local rules_cache = require("project_search.rules")
 local storage = require("project_search.storage")
 local templates = require("project_search.templates")
@@ -47,8 +48,20 @@ function M.check()
 
   local opts = config.get()
   info("Project root: " .. util.root())
+  for _, line in ipairs(identity.describe()) do
+    info(line)
+  end
   info("Rules path: " .. storage.path())
+  info("Identity rules path: " .. storage.identity_path())
+  info("Legacy rules path: " .. storage.legacy_path())
   info("Storage dir: " .. opts.storage_dir)
+
+  local migration = storage.migration_status()
+  if migration.needed then
+    warn("Legacy path-hash rules can be migrated", {
+      "Run :ProjectSearch migrate to copy the legacy rules file to the stable identity path.",
+    })
+  end
 
   for _, line in ipairs(templates.describe()) do
     info(line)
@@ -61,7 +74,7 @@ function M.check()
 
   if not report or report.kind == "missing" then
     warn("Current project rules file does not exist", {
-      "Run :ProjectSearchInit or open :ProjectSearch with auto_init enabled.",
+      "Run :ProjectSearch init or open :ProjectSearch with auto_init enabled.",
     })
     return
   end
