@@ -37,10 +37,11 @@ That keeps source trees clean while still letting every project have its own sea
 - Auto-initialization on first use
 - Search rules for `files`, `grep`, and `files_regex`
 - Template detection for common, React, Vue, and NestJS projects
+- User template directories for personal/team presets
 - Rule previews in Snacks Picker
 - Cached rule validation by file mtime/size so opening the picker stays fast
 - Search presets grouped separately from management actions
-- Commands to edit, reset, validate, reload, initialize, inspect, and health-check rules
+- A stable `:ProjectSearch` command with subcommands for edit/reset/validate/reload/templates/health
 
 ## React Project Example
 
@@ -66,13 +67,6 @@ return {
     },
     cmd = {
       "ProjectSearch",
-      "ProjectSearchEdit",
-      "ProjectSearchInit",
-      "ProjectSearchReset",
-      "ProjectSearchPath",
-      "ProjectSearchValidate",
-      "ProjectSearchReload",
-      "ProjectSearchHealth",
     },
     keys = {
       {
@@ -134,13 +128,6 @@ return {
     },
     cmd = {
       "ProjectSearch",
-      "ProjectSearchEdit",
-      "ProjectSearchInit",
-      "ProjectSearchReset",
-      "ProjectSearchPath",
-      "ProjectSearchValidate",
-      "ProjectSearchReload",
-      "ProjectSearchHealth",
     },
     keys = {
       {
@@ -230,8 +217,25 @@ Good candidates for custom rules:
 
 ## Commands
 
+The recommended command interface uses one stable lazy.nvim entry point:
+
 ```vim
 :ProjectSearch
+:ProjectSearch edit
+:ProjectSearch init
+:ProjectSearch init!
+:ProjectSearch reset
+:ProjectSearch path
+:ProjectSearch validate
+:ProjectSearch reload
+:ProjectSearch templates
+:ProjectSearch health
+:ProjectSearch help
+```
+
+Backward-compatible command aliases are still registered after the plugin loads:
+
+```vim
 :ProjectSearchEdit
 :ProjectSearchInit
 :ProjectSearchInit!
@@ -239,10 +243,11 @@ Good candidates for custom rules:
 :ProjectSearchPath
 :ProjectSearchValidate
 :ProjectSearchReload
+:ProjectSearchTemplates
 :ProjectSearchHealth
 ```
 
-`ProjectSearchValidate` validates the current project's JSON rules and reports errors/warnings. `ProjectSearchReload` clears the in-memory rules cache and reloads rules from disk.
+`ProjectSearch validate` validates the current project's JSON rules and reports errors/warnings. `ProjectSearch reload` clears the in-memory rules cache and reloads rules from disk.
 
 ## Configuration
 
@@ -251,6 +256,10 @@ require("project_search").setup({
   keymap = "<leader>sP",
   auto_init = true,
   storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+  template_dirs = {
+    vim.fn.stdpath("config") .. "/project-search/templates",
+    vim.fn.stdpath("data") .. "/project-search/templates",
+  },
   root = nil,
   root_markers = {
     ".git",
@@ -277,6 +286,7 @@ require("project_search").setup({
     react = true,
     vue = true,
     nest = true,
+    user = {},
   },
   picker = {
     title = "Project Search",
@@ -400,15 +410,21 @@ If `fd` rejects a regex, Project Search reports the underlying `fd` error instea
 The main panel keeps executable search rules first and management actions at the bottom:
 
 ```text
-Search  Files: src                         files
-Search  React: className                   grep
-Search  Service: API layer files           files_regex
+── Common ──
+  Files: src                         files
 
-Manage  Edit current project search rules
-Manage  Reset current project rules from template
-Manage  Validate current project rules
-Manage  Reload current project rules
-Manage  Copy current rules path
+── React ──
+  React: className                   grep
+
+── Service ──
+  Service: API layer files           files_regex
+
+── Manage ──
+  Edit current project search rules
+  Reset current project rules from template
+  Validate current project rules
+  Reload current project rules
+  Copy current rules path
 ```
 
 Rule previews are generated on demand when the preview pane needs them, so opening the panel stays fast even with many presets.
@@ -461,7 +477,7 @@ Rule previews are generated on demand when the preview pane needs them, so openi
 Run:
 
 ```vim
-:ProjectSearchHealth
+:ProjectSearch health
 ```
 
 or:
