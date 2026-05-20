@@ -1,0 +1,145 @@
+{
+  "presets": [
+    {
+      "cwd": "src",
+      "type": "files",
+      "name": "Files: src"
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "dirs": ["src"],
+      "search": "TODO|FIXME",
+      "name": "Search: TODO / FIXME"
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "dirs": ["src"],
+      "search": "process\\.env|import\\.meta\\.env",
+      "name": "Search: env usage",
+      "glob": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"]
+    },
+    {
+      "exclude": ["node_modules", "dist", "build", ".next"],
+      "type": "files_regex",
+      "regex": "(^|/)hooks/use-[a-z0-9-]+\\.(ts|tsx|js|jsx)$",
+      "dirs": ["src", "app", "packages"],
+      "name": "Hooks: use-* kebab files"
+    },
+    {
+      "type": "grep",
+      "name": "React: className",
+      "dirs": ["src", "app"],
+      "search": "className",
+      "glob": ["*.tsx", "*.jsx"]
+    },
+    {
+      "type": "grep",
+      "name": "React: queryKey",
+      "dirs": ["src", "app"],
+      "search": "queryKey",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "dirs": ["src", "app"],
+      "search": "\\bexport\\s+(function|const)\\s+use[A-Z][A-Za-z0-9_]*",
+      "name": "React: custom hook definitions",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "Router: route definitions",
+      "dirs": ["src/routes"],
+      "search": "createFileRoute|createRootRouteWithContext",
+      "glob": ["*.tsx", "*.ts"]
+    },
+    {
+      "exclude": ["node_modules"],
+      "type": "files_regex",
+      "regex": "\\.(desktop|mobile)\\.template\\.(tsx|jsx)$",
+      "dirs": ["src"],
+      "name": "Templates: desktop/mobile"
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "TanStack Query: hooks",
+      "dirs": ["src"],
+      "search": "useQuery|useMutation|useInfiniteQuery",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "Zustand: store definitions",
+      "dirs": ["src"],
+      "search": "create\\(\\)|create<",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "Auth: route guards",
+      "dirs": ["src"],
+      "search": "requireAuthenticated|redirectIfAuthenticated",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "files_regex",
+      "regex": "service/[^/]+\\.(ts|tsx)$",
+      "dirs": ["src"],
+      "exclude": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"],
+      "name": "Service: API layer files"
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "UI: shadcn component imports",
+      "dirs": ["src"],
+      "search": "from\\s+['\"]@/components/ui/",
+      "glob": ["*.tsx", "*.jsx"]
+    },
+    {
+      "exclude": ["node_modules"],
+      "type": "files_regex",
+      "regex": "^src/features/[^/]+/(index|\\w+-\\w+)\\.ts$",
+      "dirs": ["src/features"],
+      "name": "Features: module entry files"
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "Danger: cross-module imports",
+      "dirs": ["src/features"],
+      "search": "from\\s+['\"]@/features/",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "Types: feature interfaces",
+      "dirs": ["src/features"],
+      "search": "\\bexport\\s+(interface|type)\\s+[A-Z]",
+      "glob": ["*.ts", "*.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
+      "name": "React: context providers",
+      "dirs": ["src"],
+      "search": "createContext|useContext",
+      "glob": ["*.ts", "*.tsx"]
+    }
+  ],
+  "version": 1,
+  "meta": {
+    "template": "react",
+    "projectRoot": "/home/lambert/githubRepos/angentic-react-forge",
+    "note": "This file is stored outside your project. Edit presets to customize LazyVim project search.",
+    "createdAt": "2026-05-20T02:54:15Z"
+  }
+}
