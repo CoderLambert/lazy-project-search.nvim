@@ -126,9 +126,7 @@ function M.current()
     return cache.identity
   end
 
-  local identity = make_identity(root, "git", read_origin_remote(root))
-    or make_identity(root, "package", read_package_name(root))
-    or make_identity(root, "path", root)
+  local identity = make_identity(root, "git", read_origin_remote(root)) or make_identity(root, "package", read_package_name(root)) or make_identity(root, "path", root)
 
   cache.root = root
   cache.identity = identity
