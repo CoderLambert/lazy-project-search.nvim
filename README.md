@@ -4,6 +4,8 @@ Project-level search presets for LazyVim, powered by Snacks Picker.
 
 [中文文档](README.zh-CN.md)
 
+Status: usable for daily LazyVim workflows. The rule format and public API may still change before v1.0.
+
 ## Why
 
 Every real project develops its own search habits.
