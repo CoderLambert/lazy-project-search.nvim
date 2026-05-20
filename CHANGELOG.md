@@ -5,6 +5,10 @@
 - Add plain Neovim support with configurable `root` and `root_markers`.
 - Document plain Neovim installation with `snacks.nvim` picker enabled.
 - Make generated rule metadata wording independent of LazyVim.
+- Support `exclude` in `grep` presets — exclude patterns are now converted to ripgrep `--glob '!...'` args, matching `files_regex` behavior.
+- Add interactive live-search preset example to React rule demo.
+- Add CLAUDE.md AI agent reference for rule generation.
+- Add preset configuration guide (`docs/rule/PRESET_GUIDE.md`).
 
 ## v0.1.0
 

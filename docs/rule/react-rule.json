@@ -98,6 +98,16 @@
     {
       "type": "grep",
       "regex": true,
+      "live": true,
+      "name": "Search: service content",
+      "dirs": ["src/service"],
+      "search": "",
+      "glob": ["*.ts", "*.tsx"],
+      "exclude": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"]
+    },
+    {
+      "type": "grep",
+      "regex": true,
       "name": "UI: shadcn component imports",
       "dirs": ["src"],
       "search": "from\\s+['\"]@/components/ui/",

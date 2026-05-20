@@ -121,6 +121,12 @@ local function open_grep_picker(preset)
     return
   end
 
+  local args = vim.deepcopy(preset.args or {})
+  for _, item in ipairs(merge_excludes(preset)) do
+    table.insert(args, "--glob")
+    table.insert(args, "!" .. item)
+  end
+
   picker.grep({
     title = preset.name,
     cwd = util.root(),
@@ -129,7 +135,7 @@ local function open_grep_picker(preset)
     live = preset.live == true,
     dirs = preset.dirs and util.expand_dirs(preset.dirs) or nil,
     glob = preset.glob,
-    args = preset.args,
+    args = args,
     hidden = preset.hidden,
     ignored = preset.ignored,
     show_empty = true,
