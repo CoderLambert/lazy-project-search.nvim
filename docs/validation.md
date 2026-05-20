@@ -1,6 +1,6 @@
 # Validation
 
-Project Search includes lightweight validation and test scripts for local development and CI.
+Project Search includes lightweight validation, formatting, and test scripts for local development and CI.
 
 ## What validation checks
 
@@ -11,6 +11,21 @@ The validation script checks:
 - builtin template schema validation through `project_search.schema`
 
 It does not run `fd`, `rg`, or scan a project directory.
+
+## What formatting checks
+
+StyLua is used to keep Lua files consistently formatted.
+
+The format check covers:
+
+- `lua/**/*.lua`
+- `scripts/**/*.lua`
+
+Configuration file:
+
+```text
+stylua.toml
+```
 
 ## What tests cover
 
@@ -31,6 +46,18 @@ The runner tests cover:
 - files picker cwd resolution from `cwd` or `dirs`
 
 ## Run locally
+
+Format Lua files:
+
+```bash
+make format
+```
+
+Check formatting only:
+
+```bash
+make format-check
+```
 
 Run validation only:
 
@@ -59,12 +86,13 @@ make check
 Or directly:
 
 ```bash
+stylua --check lua scripts
 nvim --headless -u NONE -l scripts/validate.lua
 nvim --headless -u NONE -l scripts/test.lua
 nvim --headless -u NONE -l scripts/test_runner.lua
 ```
 
-Expected output:
+Expected output includes:
 
 ```text
 Project Search validation passed
@@ -74,7 +102,7 @@ Project Search runner tests passed: 3 passed
 
 ## CI
 
-GitHub Actions runs `make check` on:
+GitHub Actions installs StyLua and runs `make check` on:
 
 - pull requests
 - pushes to `main`
@@ -87,4 +115,4 @@ Workflow file:
 
 ## Notes
 
-Validation and tests are intentionally small and fast. They are meant to catch broken Lua syntax, invalid builtin templates, and regressions in schema/identity/storage/runner behavior before changes are merged.
+Validation, formatting, and tests are intentionally small and fast. They are meant to catch broken Lua syntax, invalid builtin templates, formatting drift, and regressions in schema/identity/storage/runner behavior before changes are merged.
