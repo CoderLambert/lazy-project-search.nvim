@@ -1,0 +1,21 @@
+lua/project_search/commands.lua
+  s_be23977594c79e::t_208893aec67cc4 5,11,17-18,27-28,36-37
+README.md
+  s_be23977594c79e::t_208893aec67cc4 36-52,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "814e999d37fe867164514015b56aa0774cb46128",
+  "prompts": {},
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
