@@ -207,7 +207,7 @@ function M.system_lines(cmd, cwd)
 
   return vim.split(result.stdout or "", "\n", {
     trimempty = true,
-  })
+  }), result
 end
 
 function M.expand_dirs(dirs)

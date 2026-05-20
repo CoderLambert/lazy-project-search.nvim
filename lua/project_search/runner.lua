@@ -54,7 +54,13 @@ local function open_files_regex_picker(preset)
     table.insert(cmd, dir)
   end
 
-  local lines = util.system_lines(cmd, util.root())
+  local lines, result = util.system_lines(cmd, util.root())
+  if result and result.code ~= 0 then
+    local message = vim.trim(result.stderr or "")
+    util.notify(message ~= "" and message or ("fd exited with code " .. result.code), vim.log.levels.ERROR)
+    return
+  end
+
   local items = {}
 
   for _, file in ipairs(lines) do
