@@ -19,7 +19,9 @@ This keeps search rules editable and project-specific without adding files to yo
 - Supports `files`, `grep`, and `files_regex` presets
 - Detects common, React, Vue, and NestJS templates
 - Provides rule previews in Snacks Picker
-- Provides edit, reset, copy path, init, path, and health commands
+- Validates project rules and reports JSON/schema errors
+- Caches parsed rules by file mtime/size so opening the picker stays fast
+- Provides edit, reset, validate, reload, copy path, init, path, and health commands
 
 ## Installation With LazyVim
 
@@ -39,6 +41,8 @@ return {
       "ProjectSearchInit",
       "ProjectSearchReset",
       "ProjectSearchPath",
+      "ProjectSearchValidate",
+      "ProjectSearchReload",
       "ProjectSearchHealth",
     },
     keys = {
@@ -132,8 +136,12 @@ require("project_search").setup({
 :ProjectSearchInit!
 :ProjectSearchReset
 :ProjectSearchPath
+:ProjectSearchValidate
+:ProjectSearchReload
 :ProjectSearchHealth
 ```
+
+`ProjectSearchValidate` validates the current project's JSON rules and reports errors/warnings. `ProjectSearchReload` clears the in-memory rules cache and reloads rules from disk.
 
 ## Rule Types
 
@@ -162,6 +170,8 @@ require("project_search").setup({
   "glob": ["*.ts", "*.tsx"]
 }
 ```
+
+`dirs`, `glob`, `exclude`, and `args` may be written as either a string or a string array. Project Search normalizes string values into arrays before running presets.
 
 ### files_regex
 
@@ -212,3 +222,5 @@ or:
 ```vim
 :checkhealth project_search
 ```
+
+The health check validates the current project rules when a rules file exists.
