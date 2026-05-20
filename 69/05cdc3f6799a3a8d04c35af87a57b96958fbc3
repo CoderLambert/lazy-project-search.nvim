@@ -1,0 +1,37 @@
+prd/v2.md
+  s_be23977594c79e::t_edb8f9445af099 42,73-83,237-238
+lua/project_search/config.lua
+  s_be23977594c79e::t_fbb70604dc1611 7-18
+lua/project_search/util.lua
+  s_be23977594c79e::t_fbb70604dc1611 6-19,31-38
+CHANGELOG.md
+  s_be23977594c79e::t_41847a167c40e0 3-8
+README.zh-CN.md
+  s_be23977594c79e::t_edb8f9445af099 412
+  s_be23977594c79e::t_cdcf54144bdf0b 3,7,108-171,245-256
+lua/project_search/health.lua
+  s_be23977594c79e::t_fbb70604dc1611 25
+prd/v1.md
+  s_be23977594c79e::t_edb8f9445af099 5,22,72,100,281-293,299
+lua/project_search/templates.lua
+  s_be23977594c79e::t_edb8f9445af099 194
+README.md
+  s_be23977594c79e::t_cdcf54144bdf0b 3,7,108-171,245-256
+  s_be23977594c79e::t_edb8f9445af099 412
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "6905cdc3f6799a3a8d04c35af87a57b96958fbc3",
+  "prompts": {},
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
