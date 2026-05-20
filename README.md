@@ -22,6 +22,12 @@ This keeps search rules editable and project-specific without adding files to yo
 - Groups search presets separately from management actions
 - Provides edit, reset, copy path, init, path, and health commands
 
+## React Project Example
+
+The picker below is from a React project with route, TanStack Query, service layer, feature module, and UI import presets. Search rules stay at the top, while rule-management actions are grouped at the bottom.
+
+![React project search example](docs/assets/react-project-search.png)
+
 ## Installation With LazyVim
 
 Create `~/.config/nvim/lua/plugins/lazy-project-search.lua`:
@@ -58,8 +64,6 @@ return {
 }
 ```
 
-`<C-p>` is intentionally a normal-mode mapping: it is fast to press, mnemonic for Project Search, and avoids LazyVim's common `<leader>p` yank-history mapping. If your terminal or personal config already uses it, change it to any key you prefer, for example `<leader>sP`.
-
 Then run:
 
 ```vim
@@ -77,6 +81,37 @@ Enable:
 ```text
 editor.snacks_picker
 ```
+
+## Keymap Recommendations
+
+The recommended mapping is normal-mode `<C-p>`:
+
+```lua
+keys = {
+  {
+    "<C-p>",
+    "<cmd>ProjectSearch<cr>",
+    desc = "Project Search",
+  },
+}
+```
+
+Why `<C-p>`:
+
+- Fast single chord for a frequently used project picker.
+- Mnemonic for Project Search or Project Picker.
+- Avoids LazyVim's common `<leader>p` yank-history mapping.
+- Does not affect insert-mode `<C-p>` completion navigation.
+
+Useful alternatives:
+
+| Keymap | When to use |
+| --- | --- |
+| `<C-p>` | Recommended when normal-mode `<C-p>` is free. |
+| `<leader>sP` | Best conflict-free fallback inside LazyVim's search namespace. |
+| `<leader>fP` | Good if you prefer grouping project search under file/find commands. |
+
+Avoid `<leader>p` in LazyVim setups because it is commonly used for Yank History, and avoid `<leader><space>` / `<leader>fp` because LazyVim uses them for Find Files and Projects.
 
 ## Requirements
 
