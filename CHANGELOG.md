@@ -4,6 +4,15 @@ All notable changes to `lazy-project-search.nvim` are documented here.
 
 The project is still pre-1.0. Rule schema and public APIs may evolve before `v1.0.0`.
 
+## v0.1.1 - 2026-05-20
+
+Documentation follow-up release.
+
+### Added
+
+- Added `docs/configuration.md` with complete setup options and rule schema reference.
+- Added documentation links to README files.
+
 ## v0.1.0 - 2026-05-20
 
 Initial usable release for daily Neovim and LazyVim project-search workflows.
