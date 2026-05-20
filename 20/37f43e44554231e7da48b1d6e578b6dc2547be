@@ -1,0 +1,23 @@
+README.md
+  s_be23977594c79e::t_0b10b90867e855 7-8
+README.zh-CN.md
+  s_be23977594c79e::t_0b10b90867e855 7-8
+CHANGELOG.md
+  s_be23977594c79e::t_0b10b90867e855 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "2037f43e44554231e7da48b1d6e578b6dc2547be",
+  "prompts": {},
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
