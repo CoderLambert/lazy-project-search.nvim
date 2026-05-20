@@ -1,0 +1,12 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "cd1f3f8db44a9c1f4f5ca4001be65835cd7b7868",
+  "prompts": {},
+  "humans": {
+    "h_0c102f4798bf38": {
+      "author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
