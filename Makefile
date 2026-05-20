@@ -1,4 +1,4 @@
-.PHONY: validate test test-runner check
+.PHONY: validate test test-runner format format-check check
 
 validate:
 	nvim --headless -u NONE -l scripts/validate.lua
@@ -9,4 +9,10 @@ test:
 test-runner:
 	nvim --headless -u NONE -l scripts/test_runner.lua
 
-check: validate test test-runner
+format:
+	stylua lua scripts
+
+format-check:
+	stylua --check lua scripts
+
+check: format-check validate test test-runner
