@@ -4,6 +4,18 @@ M.defaults = {
   keymap = "<leader>sP",
   auto_init = true,
   storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+  root = nil,
+  root_markers = {
+    ".git",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "package-lock.json",
+    "lazy-lock.json",
+    "stylua.toml",
+    "selene.toml",
+  },
   default_excludes = {
     ".git",
     "node_modules",

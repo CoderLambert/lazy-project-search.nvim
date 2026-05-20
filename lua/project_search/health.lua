@@ -22,6 +22,7 @@ function M.check()
     error("Snacks picker is not available", {
       "Install folke/snacks.nvim.",
       "In LazyVim, enable the editor.snacks_picker extra.",
+      "In plain Neovim, install and configure snacks.nvim with picker enabled.",
     })
   end
 

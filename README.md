@@ -1,10 +1,10 @@
 # lazy-project-search.nvim
 
-Project-level search presets for LazyVim, powered by Snacks Picker.
+Project-level search presets for Neovim and LazyVim, powered by Snacks Picker.
 
 [中文文档](README.zh-CN.md)
 
-Status: usable for daily LazyVim workflows. The rule format and public API may still change before v1.0.
+Status: usable for daily Neovim/LazyVim workflows. The rule format and public API may still change before v1.0.
 
 ## Why
 
@@ -105,6 +105,70 @@ Enable:
 editor.snacks_picker
 ```
 
+## Installation With Plain Neovim
+
+LazyVim is not required. You can use this plugin in a regular Neovim setup as long as `snacks.nvim` is installed with picker enabled.
+
+Example with lazy.nvim:
+
+```lua
+return {
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      picker = {
+        enabled = true,
+      },
+    },
+  },
+  {
+    "CoderLambert/lazy-project-search.nvim",
+    main = "project_search",
+    dependencies = {
+      "folke/snacks.nvim",
+    },
+    cmd = {
+      "ProjectSearch",
+      "ProjectSearchEdit",
+      "ProjectSearchInit",
+      "ProjectSearchReset",
+      "ProjectSearchPath",
+      "ProjectSearchHealth",
+    },
+    keys = {
+      {
+        "<C-p>",
+        "<cmd>ProjectSearch<cr>",
+        desc = "Project Search",
+      },
+    },
+    opts = {
+      keymap = false,
+      storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+      auto_init = true,
+      root_markers = {
+        ".git",
+        "package.json",
+        "pnpm-workspace.yaml",
+        "lazy-lock.json",
+      },
+    },
+  },
+}
+```
+
+Without LazyVim, project root detection uses `root_markers`. You can override it completely:
+
+```lua
+opts = {
+  root = function()
+    return vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+  end,
+}
+```
+
 ## Keymap Recommendations
 
 The recommended mapping is normal-mode `<C-p>`:
@@ -178,6 +242,18 @@ require("project_search").setup({
   keymap = "<leader>sP",
   auto_init = true,
   storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+  root = nil,
+  root_markers = {
+    ".git",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "package-lock.json",
+    "lazy-lock.json",
+    "stylua.toml",
+    "selene.toml",
+  },
   default_excludes = {
     ".git",
     "node_modules",
@@ -333,7 +409,7 @@ Rule previews are generated on demand when the preview pane needs them, so openi
     "projectRoot": "/home/lambert/githubRepos/your-project",
     "template": "react",
     "createdAt": "2026-05-20T00:00:00Z",
-    "note": "This file is stored outside your project. Edit presets to customize LazyVim project search."
+    "note": "This file is stored outside your project. Edit presets to customize Project Search."
   },
   "presets": [
     {

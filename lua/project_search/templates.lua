@@ -191,7 +191,7 @@ function M.default_rules()
       projectRoot = util.root(),
       template = detector.template_name(),
       createdAt = os.date("!%Y-%m-%dT%H:%M:%SZ"),
-      note = "This file is stored outside your project. Edit presets to customize LazyVim project search.",
+      note = "This file is stored outside your project. Edit presets to customize Project Search.",
     },
     presets = presets,
   }

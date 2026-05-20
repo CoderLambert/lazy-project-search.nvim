@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add plain Neovim support with configurable `root` and `root_markers`.
+- Document plain Neovim installation with `snacks.nvim` picker enabled.
+- Make generated rule metadata wording independent of LazyVim.
+
 ## v0.1.0
 
 - Initial public release.

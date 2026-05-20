@@ -1,10 +1,10 @@
 # lazy-project-search.nvim
 
-基于 LazyVim 和 Snacks Picker 的项目级搜索规则面板。
+基于 Neovim/LazyVim 和 Snacks Picker 的项目级搜索规则面板。
 
 [English README](README.md)
 
-状态：已经可以用于日常 LazyVim 工作流。规则格式和公开 API 在 v1.0 前仍可能调整。
+状态：已经可以用于日常 Neovim/LazyVim 工作流。规则格式和公开 API 在 v1.0 前仍可能调整。
 
 ## 它解决什么问题
 
@@ -105,6 +105,70 @@ LazyVim 用户需要启用 Snacks Picker：
 editor.snacks_picker
 ```
 
+## 原生 Neovim 安装
+
+这个插件不强依赖 LazyVim。只要你的 Neovim 安装了 `snacks.nvim`，并启用了 picker，就可以使用。
+
+lazy.nvim 示例：
+
+```lua
+return {
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      picker = {
+        enabled = true,
+      },
+    },
+  },
+  {
+    "CoderLambert/lazy-project-search.nvim",
+    main = "project_search",
+    dependencies = {
+      "folke/snacks.nvim",
+    },
+    cmd = {
+      "ProjectSearch",
+      "ProjectSearchEdit",
+      "ProjectSearchInit",
+      "ProjectSearchReset",
+      "ProjectSearchPath",
+      "ProjectSearchHealth",
+    },
+    keys = {
+      {
+        "<C-p>",
+        "<cmd>ProjectSearch<cr>",
+        desc = "Project Search",
+      },
+    },
+    opts = {
+      keymap = false,
+      storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+      auto_init = true,
+      root_markers = {
+        ".git",
+        "package.json",
+        "pnpm-workspace.yaml",
+        "lazy-lock.json",
+      },
+    },
+  },
+}
+```
+
+没有 LazyVim 时，项目根目录通过 `root_markers` 检测。你也可以完全自定义：
+
+```lua
+opts = {
+  root = function()
+    return vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+  end,
+}
+```
+
 ## 快捷键建议
 
 推荐 normal mode 使用 `<C-p>`：
@@ -178,6 +242,18 @@ require("project_search").setup({
   keymap = "<leader>sP",
   auto_init = true,
   storage_dir = vim.fn.stdpath("data") .. "/project-search/rules",
+  root = nil,
+  root_markers = {
+    ".git",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "package-lock.json",
+    "lazy-lock.json",
+    "stylua.toml",
+    "selene.toml",
+  },
   default_excludes = {
     ".git",
     "node_modules",
@@ -333,7 +409,7 @@ Manage  Copy current rules path
     "projectRoot": "/home/lambert/githubRepos/your-project",
     "template": "react",
     "createdAt": "2026-05-20T00:00:00Z",
-    "note": "This file is stored outside your project. Edit presets to customize LazyVim project search."
+    "note": "This file is stored outside your project. Edit presets to customize Project Search."
   },
   "presets": [
     {

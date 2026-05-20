@@ -3,6 +3,20 @@ local uv = vim.uv or vim.loop
 local M = {}
 
 function M.root()
+  local ok_config, opts = pcall(function()
+    return require("project_search.config").get()
+  end)
+  opts = ok_config and opts or {}
+
+  if type(opts.root) == "function" then
+    local ok, value = pcall(opts.root)
+    if ok and value and value ~= "" then
+      return vim.fs.normalize(value)
+    end
+  elseif type(opts.root) == "string" and opts.root ~= "" then
+    return vim.fs.normalize(opts.root)
+  end
+
   local ok, value = pcall(function()
     if _G.LazyVim and LazyVim.root then
       return LazyVim.root()
@@ -14,7 +28,14 @@ function M.root()
   end
 
   local cwd = uv.cwd()
-  return cwd and vim.fs.normalize(cwd) or vim.fn.getcwd()
+  cwd = cwd and vim.fs.normalize(cwd) or vim.fn.getcwd()
+
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local source = bufname ~= "" and bufname or cwd
+  local markers = opts.root_markers or {}
+  local root = vim.fs.root and vim.fs.root(source, markers) or nil
+
+  return root and vim.fs.normalize(root) or cwd
 end
 
 function M.join(...)
