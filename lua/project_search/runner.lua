@@ -13,19 +13,7 @@ local function merge_excludes(preset)
   return result
 end
 
-local function open_files_regex_picker(preset)
-  local fd = util.get_fd()
-
-  if not fd then
-    util.notify("missing fd/fdfind. Install fd-find to use files_regex presets.", vim.log.levels.ERROR)
-    return
-  end
-
-  if not preset.regex or preset.regex == "" then
-    util.notify("files_regex preset is missing regex: " .. tostring(preset.name), vim.log.levels.WARN)
-    return
-  end
-
+function M.build_files_regex_cmd(preset, fd)
   local cmd = {
     fd,
     "--type",
@@ -53,6 +41,64 @@ local function open_files_regex_picker(preset)
   for _, dir in ipairs(util.expand_dirs(preset.dirs or { "." })) do
     table.insert(cmd, dir)
   end
+
+  return cmd
+end
+
+function M.build_grep_opts(preset)
+  local args = vim.deepcopy(preset.args or {})
+  for _, item in ipairs(merge_excludes(preset)) do
+    table.insert(args, "--glob")
+    table.insert(args, "!" .. item)
+  end
+
+  return {
+    title = preset.name,
+    cwd = util.root(),
+    search = preset.search,
+    regex = preset.regex == true,
+    live = preset.live == true,
+    dirs = preset.dirs and util.expand_dirs(preset.dirs) or nil,
+    glob = preset.glob,
+    args = args,
+    hidden = preset.hidden,
+    ignored = preset.ignored,
+    show_empty = true,
+  }
+end
+
+function M.resolve_files_cwd(preset)
+  local cwd = util.root()
+
+  if preset.cwd then
+    local target = util.project_path(preset.cwd)
+    if util.is_dir(target) then
+      cwd = target
+    end
+  elseif preset.dirs and preset.dirs[1] then
+    local target = util.project_path(preset.dirs[1])
+    if util.is_dir(target) then
+      cwd = target
+    end
+  end
+
+  return cwd
+end
+
+local function open_files_regex_picker(preset)
+  local fd = util.get_fd()
+
+  if not fd then
+    util.notify("missing fd/fdfind. Install fd-find to use files_regex presets.", vim.log.levels.ERROR)
+    return
+  end
+
+  if not preset.regex or preset.regex == "" then
+    util.notify("files_regex preset is missing regex: " .. tostring(preset.name), vim.log.levels.WARN)
+    return
+  end
+
+  local cmd = M.build_files_regex_cmd(preset, fd)
 
   local lines, result = util.system_lines(cmd, util.root())
   if result and result.code ~= 0 then
@@ -121,25 +167,7 @@ local function open_grep_picker(preset)
     return
   end
 
-  local args = vim.deepcopy(preset.args or {})
-  for _, item in ipairs(merge_excludes(preset)) do
-    table.insert(args, "--glob")
-    table.insert(args, "!" .. item)
-  end
-
-  picker.grep({
-    title = preset.name,
-    cwd = util.root(),
-    search = preset.search,
-    regex = preset.regex == true,
-    live = preset.live == true,
-    dirs = preset.dirs and util.expand_dirs(preset.dirs) or nil,
-    glob = preset.glob,
-    args = args,
-    hidden = preset.hidden,
-    ignored = preset.ignored,
-    show_empty = true,
-  })
+  picker.grep(M.build_grep_opts(preset))
 end
 
 local function open_files_picker(preset)
@@ -150,23 +178,9 @@ local function open_files_picker(preset)
     return
   end
 
-  local cwd = util.root()
-
-  if preset.cwd then
-    local target = util.project_path(preset.cwd)
-    if util.is_dir(target) then
-      cwd = target
-    end
-  elseif preset.dirs and preset.dirs[1] then
-    local target = util.project_path(preset.dirs[1])
-    if util.is_dir(target) then
-      cwd = target
-    end
-  end
-
   picker.files({
     title = preset.name,
-    cwd = cwd,
+    cwd = M.resolve_files_cwd(preset),
     hidden = preset.hidden,
     ignored = preset.ignored,
   })
