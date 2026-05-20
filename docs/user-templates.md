@@ -86,7 +86,7 @@ require("project_search").setup({
 Then regenerate rules for the current project:
 
 ```vim
-:ProjectSearchReset
+:ProjectSearch reset
 ```
 
 ## Enable all user templates
@@ -104,7 +104,7 @@ require("project_search").setup({
 ## Inspect templates
 
 ```vim
-:ProjectSearchTemplates
+:ProjectSearch templates
 ```
 
 This command prints:
