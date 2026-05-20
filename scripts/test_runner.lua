@@ -192,23 +192,32 @@ test("runner resolves files cwd from cwd or dirs", function()
   mkdir(util.join(project, "packages", "web"))
   with_project(project)
 
-  assert_eq(runner.resolve_files_cwd({
-    name = "Files: src",
-    type = "files",
-    cwd = "src",
-  }), util.join(project, "src"))
+  assert_eq(
+    runner.resolve_files_cwd({
+      name = "Files: src",
+      type = "files",
+      cwd = "src",
+    }),
+    util.join(project, "src")
+  )
 
-  assert_eq(runner.resolve_files_cwd({
-    name = "Files: packages/web",
-    type = "files",
-    dirs = { "packages/web" },
-  }), util.join(project, "packages", "web"))
+  assert_eq(
+    runner.resolve_files_cwd({
+      name = "Files: packages/web",
+      type = "files",
+      dirs = { "packages/web" },
+    }),
+    util.join(project, "packages", "web")
+  )
 
-  assert_eq(runner.resolve_files_cwd({
-    name = "Files: missing",
-    type = "files",
-    cwd = "missing",
-  }), project)
+  assert_eq(
+    runner.resolve_files_cwd({
+      name = "Files: missing",
+      type = "files",
+      cwd = "missing",
+    }),
+    project
+  )
 end)
 
 local passed = 0

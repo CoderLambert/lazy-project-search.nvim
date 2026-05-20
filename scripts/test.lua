@@ -187,11 +187,14 @@ test("identity prefers git origin", function()
   local project = make_tmp_dir("git")
 
   vim.fn.mkdir(util.join(project, ".git"), "p")
-  write_file(util.join(project, ".git", "config"), table.concat({
-    '[remote "origin"]',
-    "  url = git@github.com:CoderLambert/lazy-project-search.nvim.git",
-    "",
-  }, "\n"))
+  write_file(
+    util.join(project, ".git", "config"),
+    table.concat({
+      '[remote "origin"]',
+      "  url = git@github.com:CoderLambert/lazy-project-search.nvim.git",
+      "",
+    }, "\n")
+  )
 
   with_project(project)
 
@@ -206,9 +209,12 @@ test("identity falls back to package name", function()
   local util = require("project_search.util")
   local project = make_tmp_dir("package")
 
-  write_file(util.join(project, "package.json"), vim.json.encode({
-    name = "@Company/My React App",
-  }))
+  write_file(
+    util.join(project, "package.json"),
+    vim.json.encode({
+      name = "@Company/My React App",
+    })
+  )
 
   with_project(project)
 
@@ -238,11 +244,14 @@ test("storage migrates legacy path-hash rules to identity path", function()
   local storage_dir = make_tmp_dir("storage")
 
   vim.fn.mkdir(util.join(project, ".git"), "p")
-  write_file(util.join(project, ".git", "config"), table.concat({
-    '[remote "origin"]',
-    "  url = https://github.com/CoderLambert/example-app.git",
-    "",
-  }, "\n"))
+  write_file(
+    util.join(project, ".git", "config"),
+    table.concat({
+      '[remote "origin"]',
+      "  url = https://github.com/CoderLambert/example-app.git",
+      "",
+    }, "\n")
+  )
 
   with_project(project, storage_dir)
 
@@ -287,11 +296,14 @@ test("storage reports migration read failures", function()
   local storage_dir = make_tmp_dir("storage-failure")
 
   vim.fn.mkdir(util.join(project, ".git"), "p")
-  write_file(util.join(project, ".git", "config"), table.concat({
-    '[remote "origin"]',
-    "  url = https://github.com/CoderLambert/broken-json.git",
-    "",
-  }, "\n"))
+  write_file(
+    util.join(project, ".git", "config"),
+    table.concat({
+      '[remote "origin"]',
+      "  url = https://github.com/CoderLambert/broken-json.git",
+      "",
+    }, "\n")
+  )
 
   with_project(project, storage_dir)
   write_file(storage.legacy_path(), "{ invalid json")

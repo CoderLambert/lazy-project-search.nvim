@@ -39,9 +39,7 @@ function M.is_react()
     "next",
     "@vitejs/plugin-react",
     "@vitejs/plugin-react-swc",
-  }) or util.exists(util.join(util.root(), "next.config.js"))
-    or util.exists(util.join(util.root(), "next.config.mjs"))
-    or util.exists(util.join(util.root(), "next.config.ts"))
+  }) or util.exists(util.join(util.root(), "next.config.js")) or util.exists(util.join(util.root(), "next.config.mjs")) or util.exists(util.join(util.root(), "next.config.ts"))
 end
 
 function M.is_vue()

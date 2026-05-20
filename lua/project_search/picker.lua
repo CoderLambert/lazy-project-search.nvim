@@ -359,9 +359,12 @@ function M.open()
     end
   end
 
-  table.insert(items, make_action_item("Edit current project search rules", "Open the JSON rules file for this project.", function()
-    storage.edit()
-  end))
+  table.insert(
+    items,
+    make_action_item("Edit current project search rules", "Open the JSON rules file for this project.", function()
+      storage.edit()
+    end)
+  )
   table.insert(
     items,
     make_action_item("Reset current project rules from template", "Regenerate this project's rules from detected templates.", function()
@@ -370,15 +373,24 @@ function M.open()
       util.notify("rules reset: " .. path)
     end)
   )
-  table.insert(items, make_action_item("Validate current project rules", "Validate the current project's JSON rules file.", function()
-    validate_current_rules()
-  end))
-  table.insert(items, make_action_item("Reload current project rules", "Clear the in-memory cache and reload rules from disk.", function()
-    reload_current_rules()
-  end))
-  table.insert(items, make_action_item("Copy current rules path", "Copy the current project's rules file path to the clipboard.", function()
-    storage.copy_path()
-  end))
+  table.insert(
+    items,
+    make_action_item("Validate current project rules", "Validate the current project's JSON rules file.", function()
+      validate_current_rules()
+    end)
+  )
+  table.insert(
+    items,
+    make_action_item("Reload current project rules", "Clear the in-memory cache and reload rules from disk.", function()
+      reload_current_rules()
+    end)
+  )
+  table.insert(
+    items,
+    make_action_item("Copy current rules path", "Copy the current project's rules file path to the clipboard.", function()
+      storage.copy_path()
+    end)
+  )
 
   sort_items(items)
   local display_items = with_group_headers(items)

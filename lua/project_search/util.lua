@@ -221,10 +221,12 @@ function M.get_fd()
 end
 
 function M.system_lines(cmd, cwd)
-  local result = vim.system(cmd, {
-    cwd = cwd,
-    text = true,
-  }):wait()
+  local result = vim
+    .system(cmd, {
+      cwd = cwd,
+      text = true,
+    })
+    :wait()
 
   return vim.split(result.stdout or "", "\n", {
     trimempty = true,
