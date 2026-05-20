@@ -23,6 +23,13 @@ The headless unit tests cover:
 - storage migration from legacy path-hash rules to stable identity rules
 - migration read failure reporting
 
+The runner tests cover:
+
+- `files_regex` fd command construction
+- default and preset-specific exclude merging
+- grep picker option construction
+- files picker cwd resolution from `cwd` or `dirs`
+
 ## Run locally
 
 Run validation only:
@@ -31,13 +38,19 @@ Run validation only:
 make validate
 ```
 
-Run unit tests only:
+Run core unit tests only:
 
 ```bash
 make test
 ```
 
-Run both:
+Run runner tests only:
+
+```bash
+make test-runner
+```
+
+Run all checks:
 
 ```bash
 make check
@@ -48,6 +61,7 @@ Or directly:
 ```bash
 nvim --headless -u NONE -l scripts/validate.lua
 nvim --headless -u NONE -l scripts/test.lua
+nvim --headless -u NONE -l scripts/test_runner.lua
 ```
 
 Expected output:
@@ -55,11 +69,12 @@ Expected output:
 ```text
 Project Search validation passed
 Project Search tests passed: 9 passed
+Project Search runner tests passed: 3 passed
 ```
 
 ## CI
 
-GitHub Actions runs validation and tests on:
+GitHub Actions runs `make check` on:
 
 - pull requests
 - pushes to `main`
@@ -72,4 +87,4 @@ Workflow file:
 
 ## Notes
 
-Validation and tests are intentionally small and fast. They are meant to catch broken Lua syntax, invalid builtin templates, and regressions in schema/identity/storage behavior before changes are merged.
+Validation and tests are intentionally small and fast. They are meant to catch broken Lua syntax, invalid builtin templates, and regressions in schema/identity/storage/runner behavior before changes are merged.
