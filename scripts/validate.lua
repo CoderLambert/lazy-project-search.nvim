@@ -10,6 +10,10 @@ package.path = table.concat({
 local errors = {}
 local warnings = {}
 
+local function is_list(value)
+  return vim.islist(value)
+end
+
 local function add_error(message)
   errors[#errors + 1] = message
 end
@@ -72,14 +76,14 @@ local function normalize_template_data(path, data)
     return nil
   end
 
-  if vim.tbl_islist(data) then
+  if is_list(data) then
     return {
       version = 1,
       presets = data,
     }
   end
 
-  if vim.tbl_islist(data.presets or {}) then
+  if is_list(data.presets or {}) then
     data.version = data.version or 1
     return data
   end
