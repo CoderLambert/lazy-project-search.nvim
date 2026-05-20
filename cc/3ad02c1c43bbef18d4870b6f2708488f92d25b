@@ -1,0 +1,22 @@
+lua/project_search/util.lua
+  s_be23977594c79e::t_ce4f5dec149141 74-77,79-86,90-105,115-125,131,138
+  s_be23977594c79e::t_4b414347061720 88-89,106-114,127-128
+lua/project_search/picker.lua
+  s_be23977594c79e::t_ce4f5dec149141 97,111-129,189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.10",
+  "base_commit_sha": "cc3ad02c1c43bbef18d4870b6f2708488f92d25b",
+  "prompts": {},
+  "sessions": {
+    "s_be23977594c79e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4379-a303-77a1-8bc2-3fd01faaf8c0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "lambert.li <lambert.li@jtexpress.com>"
+    }
+  }
+}
