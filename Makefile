@@ -15,4 +15,4 @@ format:
 format-check:
 	stylua --check lua scripts
 
-check: validate test test-runner
+check: format-check validate test test-runner
